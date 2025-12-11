@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>写作设置 - FlutterPage作者中心</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../static/css/common.css">
+    <link rel="stylesheet" href="../../static/css/writing-settings.css">
+</head>
+<body>
+<!-- 背景元素 -->
+<div id="backgroundElements" class="background-elements"></div>
+
+<!-- 导航栏 -->
+<nav class="navbar">
+    <div class="logo">
+        <h1><i class="fas fa-pen-fancy"></i> FlutterPage作者中心</h1>
+    </div>
+    <div class="nav-links">
+        <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> 仪表板</a>
+        <a href="works-management.html"><i class="fas fa-book"></i> 作品管理</a>
+        <a href="chapter-management.html"><i class="fas fa-file-alt"></i> 章节管理</a>
+        <a href="data-analysis.html"><i class="fas fa-chart-bar"></i> 数据分析</a>
+        <a href="income-center.html"><i class="fas fa-coins"></i> 收入中心</a>
+        <a href="comment-management.html"><i class="fas fa-comments"></i> 评论管理</a>
+        <a href="writing-settings.html" class="active"><i class="fas fa-cog"></i> 写作设置</a>
+    </div>
+    <div class="user-actions">
+        <div class="user-info">
+            <div class="user-avatar" id="authorAvatar">作</div>
+            <span id="authorName">作者名称</span>
+        </div>
+        <a href="../home.html" class="btn btn-secondary btn-sm">
+            <i class="fas fa-home"></i> 返回首页
+        </a>
+        <button class="logout-btn" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> 退出
+        </button>
+    </div>
+</nav>
+
+<!-- 主内容区 -->
+<div class="main-container writing-settings">
+    <!-- 页面标题和操作栏 -->
+    <div class="page-header">
+        <div class="page-title">
+            <i class="fas fa-cog"></i> 写作设置
+        </div>
+        <div class="page-actions">
+            <button class="btn btn-secondary" onclick="writingSettings.resetToDefault()">
+                <i class="fas fa-undo"></i> 恢复默认
+            </button>
+            <button class="btn btn-primary" onclick="writingSettings.saveSettings()">
+                <i class="fas fa-save"></i> 保存设置
+            </button>
+        </div>
+    </div>
+
+    <!-- 设置内容 -->
+    <div class="settings-content">
+        <!-- 左侧导航 -->
+        <div class="settings-nav">
+            <div class="nav-group">
+                <h3>写作偏好</h3>
+                <button class="nav-item active" data-target="editor-settings">
+                    <i class="fas fa-edit"></i> 编辑器设置
+                </button>
+                <button class="nav-item" data-target="auto-save">
+                    <i class="fas fa-save"></i> 自动保存
+                </button>
+                <button class="nav-item" data-target="writing-habits">
+                    <i class="fas fa-clock"></i> 写作习惯
+                </button>
+            </div>
+            <div class="nav-group">
+                <h3>发布设置</h3>
+                <button class="nav-item" data-target="publish-settings">
+                    <i class="fas fa-paper-plane"></i> 发布选项
+                </button>
+                <button class="nav-item" data-target="chapter-defaults">
+                    <i class="fas fa-file-alt"></i> 章节默认值
+                </button>
+            </div>
+            <div class="nav-group">
+                <h3>内容管理</h3>
+                <button class="nav-item" data-target="content-filters">
+                    <i class="fas fa-filter"></i> 内容过滤
+                </button>
+                <button class="nav-item" data-target="backup-settings">
+                    <i class="fas fa-database"></i> 备份设置
+                </button>
+            </div>
+            <div class="nav-group">
+                <h3>高级设置</h3>
+                <button class="nav-item" data-target="advanced-settings">
+                    <i class="fas fa-cogs"></i> 高级选项
+                </button>
+                <button class="nav-item" data-target="privacy-settings">
+                    <i class="fas fa-user-secret"></i> 隐私设置
+                </button>
+            </div>
+        </div>
+
+        <!-- 右侧设置面板 -->
+        <div class="settings-panels">
+            <!-- 编辑器设置 -->
+            <div class="settings-panel active" id="editor-settings">
+                <div class="panel-header">
+                    <h3><i class="fas fa-edit"></i> 编辑器设置</h3>
+                    <p>自定义您的写作界面和编辑体验</p>
+                </div>
+                <div class="panel-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">编辑器主题</label>
+                            <select class="form-control" id="editorTheme">
+                                <option value="light">浅色主题</option>
+                                <option value="dark">深色主题</option>
+                                <option value="sepia">护眼模式</option>
+                                <option value="custom">自定义</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">字体大小</label>
+                            <select class="form-control" id="editorFontSize">
+                                <option value="14">14px</option>
+                                <option value="16" selected>16px</option>
+                                <option value="18">18px</option>
+                                <option value="20">20px</option>
+                                <option value="22">22px</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">字体家族</label>
+                            <select class="form-control" id="editorFontFamily">
+                                <option value="system">系统默认</option>
+                                <option value="serif">衬线字体</option>
+                                <option value="sans-serif">无衬线字体</option>
+                                <option value="monospace">等宽字体</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">行间距</label>
+                            <select class="form-control" id="editorLineHeight">
+                                <option value="1.2">紧凑</option>
+                                <option value="1.5" selected>标准</option>
+                                <option value="1.8">宽松</option>
+                                <option value="2.0">超宽松</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">编辑器宽度</label>
+                        <div class="range-input">
+                            <input type="range" id="editorWidth" min="600" max="1200" step="50" value="800">
+                            <span id="editorWidthValue">800px</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="editorSpellCheck" checked>
+                            <span class="checkmark"></span>
+                            启用拼写检查
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="editorWordCount" checked>
+                            <span class="checkmark"></span>
+                            显示实时字数统计
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="editorFullScreen" checked>
+                            <span class="checkmark"></span>
+                            启用全屏写作模式
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 自动保存设置 -->
+            <div class="settings-panel" id="auto-save">
+                <div class="panel-header">
+                    <h3><i class="fas fa-save"></i> 自动保存设置</h3>
+                    <p>配置自动保存功能，防止内容丢失</p>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="autoSaveEnabled" checked>
+                            <span class="checkmark"></span>
+                            启用自动保存
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">自动保存间隔</label>
+                        <select class="form-control" id="autoSaveInterval">
+                            <option value="30">30秒</option>
+                            <option value="60" selected>1分钟</option>
+                            <option value="120">2分钟</option>
+                            <option value="300">5分钟</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="autoSaveBeforeExit" checked>
+                            <span class="checkmark"></span>
+                            退出前自动保存
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="autoSaveDrafts" checked>
+                            <span class="checkmark"></span>
+                            自动保存草稿
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">草稿保留时间</label>
+                        <select class="form-control" id="draftRetention">
+                            <option value="7">7天</option>
+                            <option value="30" selected>30天</option>
+                            <option value="90">90天</option>
+                            <option value="365">1年</option>
+                            <option value="0">永久保留</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 写作习惯 -->
+            <div class="settings-panel" id="writing-habits">
+                <div class="panel-header">
+                    <h3><i class="fas fa-clock"></i> 写作习惯设置</h3>
+                    <p>根据您的写作习惯优化体验</p>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label class="form-label">每日写作目标</label>
+                        <div class="input-with-unit">
+                            <input type="number" class="form-control" id="dailyWordGoal" min="100" max="20000" value="3000">
+                            <span class="unit">字</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">写作提醒</label>
+                        <div class="time-picker">
+                            <select class="form-control" id="reminderHour">
+                                <option value="8">08:00</option>
+                                <option value="9">09:00</option>
+                                <option value="10">10:00</option>
+                                <option value="14">14:00</option>
+                                <option value="15">15:00</option>
+                                <option value="16">16:00</option>
+                                <option value="20">20:00</option>
+                                <option value="21">21:00</option>
+                            </select>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="reminderEnabled">
+                                <span class="checkmark"></span>
+                                启用提醒
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="focusMode" checked>
+                            <span class="checkmark"></span>
+                            启用专注模式（隐藏工具栏）
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="typewriterMode">
+                            <span class="checkmark"></span>
+                            启用打字机模式（当前行居中）
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">写作统计</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="statsWords" checked>
+                                <span class="checkmark"></span>
+                                显示字数统计
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="statsTime" checked>
+                                <span class="checkmark"></span>
+                                显示写作时间
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="statsSpeed">
+                                <span class="checkmark"></span>
+                                显示打字速度
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 发布设置 -->
+            <div class="settings-panel" id="publish-settings">
+                <div class="panel-header">
+                    <h3><i class="fas fa-paper-plane"></i> 发布设置</h3>
+                    <p>配置章节发布相关选项</p>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label class="form-label">默认发布状态</label>
+                        <select class="form-control" id="defaultPublishStatus">
+                            <option value="draft">草稿</option>
+                            <option value="published" selected>立即发布</option>
+                            <option value="scheduled">定时发布</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="publishConfirmation" checked>
+                            <span class="checkmark"></span>
+                            发布前确认
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="autoChapterNumbering" checked>
+                            <span class="checkmark"></span>
+                            自动章节编号
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="allowComments" checked>
+                            <span class="checkmark"></span>
+                            默认允许评论
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="allowVoting" checked>
+                            <span class="checkmark"></span>
+                            默认允许投票
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">发布后操作</label>
+                        <select class="form-control" id="postPublishAction">
+                            <option value="stay">停留在当前页面</option>
+                            <option value="next" selected>创建下一章</option>
+                            <option value="list">返回章节列表</option>
+                            <option value="dashboard">返回仪表板</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 章节默认值 -->
+            <div class="settings-panel" id="chapter-defaults">
+                <div class="panel-header">
+                    <h3><i class="fas fa-file-alt"></i> 章节默认值</h3>
+                    <p>设置新章节的默认属性</p>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label class="form-label">默认章节标题</label>
+                        <input type="text" class="form-control" id="defaultChapterTitle" placeholder="例如：第{number}章 {title}">
+                        <div class="form-text">使用{number}代表章节号，{title}代表章节标题</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">默认章节价格</label>
+                        <div class="input-with-unit">
+                            <input type="number" class="form-control" id="defaultChapterPrice" min="0" max="100" value="0">
+                            <span class="unit">书币</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">默认章节字数</label>
+                        <div class="input-with-unit">
+                            <input type="number" class="form-control" id="defaultChapterLength" min="1000" max="10000" value="3000">
+                            <span class="unit">字</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="defaultVipOnly">
+                            <span class="checkmark"></span>
+                            默认仅VIP可读
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="defaultAllowShare" checked>
+                            <span class="checkmark"></span>
+                            默认允许分享
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 内容过滤 -->
+            <div class="settings-panel" id="content-filters">
+                <div class="panel-header">
+                    <h3><i class="fas fa-filter"></i> 内容过滤设置</h3>
+                    <p>设置内容审查和过滤规则</p>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="contentFilterEnabled" checked>
+                            <span class="checkmark"></span>
+                            启用内容过滤
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">敏感词过滤级别</label>
+                        <select class="form-control" id="sensitiveWordLevel">
+                            <option value="low">宽松</option>
+                            <option value="medium" selected>中等</option>
+                            <option value="high">严格</option>
+                            <option value="custom">自定义</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">自定义敏感词</label>
+                        <textarea class="form-control" id="customSensitiveWords" rows="4" placeholder="每行输入一个敏感词"></textarea>
+                        <div class="form-text">每行输入一个敏感词，区分大小写</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="autoReplaceSensitiveWords" checked>
+                            <span class="checkmark"></span>
+                            自动替换敏感词为***
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="contentReviewBeforePublish">
+                            <span class="checkmark"></span>
+                            发布前内容审查
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 备份设置 -->
+            <div class="settings-panel" id="backup-settings">
+                <div class="panel-header">
+                    <h3><i class="fas fa-database"></i> 备份设置</h3>
+                    <p>配置作品和数据的自动备份</p>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="autoBackupEnabled" checked>
+                            <span class="checkmark"></span>
+                            启用自动备份
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">备份频率</label>
+                        <select class="form-control" id="backupFrequency">
+                            <option value="daily">每天</option>
+                            <option value="weekly" selected>每周</option>
+                            <option value="monthly">每月</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">保留备份数量</label>
+                        <select class="form-control" id="backupRetention">
+                            <option value="5">5个</option>
+                            <option value="10" selected>10个</option>
+                            <option value="20">20个</option>
+                            <option value="50">50个</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="backupOnPublish" checked>
+                            <span class="checkmark"></span>
+                            发布时自动备份
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">备份格式</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="backupFormatTxt" checked>
+                                <span class="checkmark"></span>
+                                TXT
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="backupFormatDoc">
+                                <span class="checkmark"></span>
+                                DOC
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="backupFormatPdf">
+                                <span class="checkmark"></span>
+                                PDF
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-secondary" onclick="writingSettings.manualBackup()">
+                            <i class="fas fa-download"></i> 立即备份
+                        </button>
+                        <button class="btn btn-secondary" onclick="writingSettings.restoreBackup()">
+                            <i class="fas fa-upload"></i> 恢复备份
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 高级设置 -->
+            <div class="settings-panel" id="advanced-settings">
+                <div class="panel-header">
+                    <h3><i class="fas fa-cogs"></i> 高级设置</h3>
+                    <p>高级功能和性能选项</p>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="enableExperimentalFeatures">
+                            <span class="checkmark"></span>
+                            启用实验性功能
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="enableKeyboardShortcuts" checked>
+                            <span class="checkmark"></span>
+                            启用键盘快捷键
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="enableMarkdownSupport">
+                            <span class="checkmark"></span>
+                            启用Markdown支持
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="enableRichTextEditor" checked>
+                            <span class="checkmark"></span>
+                            启用富文本编辑器
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">编辑器性能模式</label>
+                        <select class="form-control" id="editorPerformanceMode">
+                            <option value="auto">自动</option>
+                            <option value="performance">性能优先</option>
+                            <option value="quality">质量优先</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">最大撤销步骤</label>
+                        <select class="form-control" id="maxUndoSteps">
+                            <option value="50">50步</option>
+                            <option value="100" selected>100步</option>
+                            <option value="200">200步</option>
+                            <option value="500">500步</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 隐私设置 -->
+            <div class="settings-panel" id="privacy-settings">
+                <div class="panel-header">
+                    <h3><i class="fas fa-user-secret"></i> 隐私设置</h3>
+                    <p>管理您的隐私和数据</p>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="showOnlineStatus" checked>
+                            <span class="checkmark"></span>
+                            显示在线状态
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="showWritingProgress">
+                            <span class="checkmark"></span>
+                            公开写作进度
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="allowPrivateMessages" checked>
+                            <span class="checkmark"></span>
+                            允许私信
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="allowFanFollowing" checked>
+                            <span class="checkmark"></span>
+                            允许读者关注
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">数据收集和使用</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="collectUsageData" checked>
+                                <span class="checkmark"></span>
+                                收集使用数据以改进体验
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="personalizedRecommendations">
+                                <span class="checkmark"></span>
+                                接收个性化推荐
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-secondary" onclick="writingSettings.exportData()">
+                            <i class="fas fa-file-export"></i> 导出个人数据
+                        </button>
+                        <button class="btn btn-danger" onclick="writingSettings.deleteAccount()">
+                            <i class="fas fa-trash"></i> 删除账户
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 通知组件 -->
+<div id="notification" class="notification">
+    <i class="fas fa-check-circle"></i>
+    <span id="notificationText"></span>
+</div>
+
+<script src="../../static/js/common.js"></script>
+<script src="../../static/js/writing-settings.js"></script>
+</body>
+</html>

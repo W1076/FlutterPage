@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理员中心 - FlutterPage</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../static/css/common.css">
+    <link rel="stylesheet" href="../../static/css/admin-dashboard.css">
+</head>
+<body>
+<!-- 背景元素 -->
+<div id="backgroundElements" class="background-elements"></div>
+
+<!-- 导航栏 -->
+<nav class="admin-navbar">
+    <div class="logo">
+        <h1><i class="fas fa-shield-alt"></i> FlutterPage 管理后台</h1>
+    </div>
+    <div class="admin-info">
+        <div class="admin-avatar">管</div>
+        <span class="admin-name">系统管理员</span>
+        <span class="admin-role">超级管理员</span>
+    </div>
+</nav>
+
+<div class="admin-container">
+    <!-- 侧边栏 -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-menu">
+            <div class="menu-item active" data-target="dashboard">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>仪表板</span>
+            </div>
+
+            <div class="menu-group">
+                <div class="group-title">
+                    <i class="fas fa-users"></i>
+                    <span>用户管理</span>
+                </div>
+                <div class="menu-item" data-target="user-management">
+                    <i class="fas fa-user"></i>
+                    <span>用户列表</span>
+                </div>
+                <div class="menu-item" data-target="author-management">
+                    <i class="fas fa-user-edit"></i>
+                    <span>作者管理</span>
+                </div>
+                <div class="menu-item" data-target="user-actions">
+                    <i class="fas fa-user-shield"></i>
+                    <span>用户行为</span>
+                </div>
+            </div>
+
+            <div class="menu-group">
+                <div class="group-title">
+                    <i class="fas fa-book"></i>
+                    <span>内容管理</span>
+                </div>
+                <div class="menu-item" data-target="novel-audit">
+                    <i class="fas fa-clipboard-check"></i>
+                    <span>作品审核</span>
+                    <span class="badge">12</span>
+                </div>
+                <div class="menu-item" data-target="chapter-audit">
+                    <i class="fas fa-file-alt"></i>
+                    <span>章节审核</span>
+                    <span class="badge">45</span>
+                </div>
+                <div class="menu-item" data-target="reported-content">
+                    <i class="fas fa-flag"></i>
+                    <span>举报处理</span>
+                    <span class="badge badge-warning">8</span>
+                </div>
+            </div>
+
+            <div class="menu-group">
+                <div class="group-title">
+                    <i class="fas fa-comments"></i>
+                    <span>评论管理</span>
+                </div>
+                <div class="menu-item" data-target="comment-audit">
+                    <i class="fas fa-comment-check"></i>
+                    <span>评论审核</span>
+                    <span class="badge">23</span>
+                </div>
+                <div class="menu-item" data-target="sensitive-words">
+                    <i class="fas fa-filter"></i>
+                    <span>敏感词管理</span>
+                </div>
+                <div class="menu-item" data-target="comment-statistics">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>评论统计</span>
+                </div>
+            </div>
+
+            <div class="menu-group">
+                <div class="group-title">
+                    <i class="fas fa-chart-line"></i>
+                    <span>数据统计</span>
+                </div>
+                <div class="menu-item" data-target="platform-stats">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>平台统计</span>
+                </div>
+                <div class="menu-item" data-target="user-stats">
+                    <i class="fas fa-user-chart"></i>
+                    <span>用户分析</span>
+                </div>
+                <div class="menu-item" data-target="income-stats">
+                    <i class="fas fa-coins"></i>
+                    <span>收入统计</span>
+                </div>
+            </div>
+
+            <div class="menu-group">
+                <div class="group-title">
+                    <i class="fas fa-cog"></i>
+                    <span>系统管理</span>
+                </div>
+                <div class="menu-item" data-target="system-settings">
+                    <i class="fas fa-sliders-h"></i>
+                    <span>系统设置</span>
+                </div>
+                <div class="menu-item" data-target="ad-management">
+                    <i class="fas fa-ad"></i>
+                    <span>广告管理</span>
+                </div>
+                <div class="menu-item" data-target="log-management">
+                    <i class="fas fa-file-alt"></i>
+                    <span>日志管理</span>
+                </div>
+            </div>
+
+            <div class="menu-item" data-target="operations">
+                <i class="fas fa-tasks"></i>
+                <span>运营中心</span>
+            </div>
+
+            <div class="menu-item" data-target="help-support">
+                <i class="fas fa-question-circle"></i>
+                <span>帮助支持</span>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <button class="btn btn-secondary btn-block" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> 退出登录
+            </button>
+            <button class="btn btn-primary btn-block" onclick="window.location.href='../home.html'">
+                <i class="fas fa-home"></i> 返回首页
+            </button>
+        </div>
+    </aside>
+
+    <!-- 主内容区 -->
+    <main class="admin-main">
+        <!-- 仪表板概览 -->
+        <section id="dashboard" class="content-section active">
+            <div class="section-header">
+                <h2><i class="fas fa-tachometer-alt"></i> 仪表板概览</h2>
+                <div class="date-range">
+                    <span>今日数据</span>
+                    <select id="dateFilter">
+                        <option value="today">今日</option>
+                        <option value="yesterday">昨日</option>
+                        <option value="week">本周</option>
+                        <option value="month">本月</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="stats-overview">
+                <div class="stat-card">
+                    <div class="stat-icon bg-primary">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">15,842</div>
+                        <div class="stat-label">总用户数</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i> +123 今日新增
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon bg-success">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">3,567</div>
+                        <div class="stat-label">总作品数</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i> +45 今日新增
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon bg-warning">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">1.2M</div>
+                        <div class="stat-label">今日阅读量</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i> +12.5%
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon bg-danger">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">¥45,678</div>
+                        <div class="stat-label">今日收入</div>
+                        <div class="stat-change negative">
+                            <i class="fas fa-arrow-down"></i> -3.2%
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-row">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-chart-line"></i> 用户增长趋势</h3>
+                        <select class="chart-filter">
+                            <option value="7">近7天</option>
+                            <option value="30" selected>近30天</option>
+                            <option value="90">近90天</option>
+                        </select>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="userGrowthChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-chart-pie"></i> 作品分类分布</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-row">
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3><i class="fas fa-clock"></i> 待处理任务</h3>
+                        <a href="#" class="view-all" onclick="switchSection('novel-audit')">查看更多 <i
+                                class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="admin-table">
+                            <thead>
+                            <tr>
+                                <th>类型</th>
+                                <th>标题</th>
+                                <th>提交时间</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td><span class="badge badge-audit">作品审核</span></td>
+                                <td>《星穹传说》第45章</td>
+                                <td>2023-10-15 14:23</td>
+                                <td><span class="status pending">待审核</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary">审核</button>
+                                    <button class="btn btn-sm btn-secondary">查看</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge badge-comment">评论审核</span></td>
+                                <td>用户评论违规举报</td>
+                                <td>2023-10-15 13:45</td>
+                                <td><span class="status pending">待处理</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary">处理</button>
+                                    <button class="btn btn-sm btn-secondary">忽略</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge badge-user">用户申请</span></td>
+                                <td>用户"文学爱好者"申请成为作者</td>
+                                <td>2023-10-15 11:30</td>
+                                <td><span class="status pending">待审核</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary">审核</button>
+                                    <button class="btn btn-sm btn-secondary">查看详情</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge badge-report">内容举报</span></td>
+                                <td>作品《灵域迷踪》第23章</td>
+                                <td>2023-10-15 10:15</td>
+                                <td><span class="status processing">处理中</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary">继续处理</button>
+                                    <button class="btn btn-sm btn-secondary">转交</button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-bell"></i> 系统通知</h3>
+                        <button class="btn btn-sm btn-secondary" onclick="markAllRead()">全部标记已读</button>
+                    </div>
+                    <div class="notifications-list">
+                        <div class="notification-item unread">
+                            <div class="notification-icon warning">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="notification-content">
+                                <div class="notification-title">系统维护通知</div>
+                                <div class="notification-text">计划于今晚12:00-2:00进行系统维护，请提前保存数据。</div>
+                                <div class="notification-time">2小时前</div>
+                            </div>
+                        </div>
+                        <div class="notification-item">
+                            <div class="notification-icon success">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="notification-content">
+                                <div class="notification-title">新版本发布</div>
+                                <div class="notification-text">系统已升级至v2.1.0版本，新增多项管理功能。</div>
+                                <div class="notification-time">1天前</div>
+                            </div>
+                        </div>
+                        <div class="notification-item">
+                            <div class="notification-icon info">
+                                <i class="fas fa-info-circle"></i>
+                            </div>
+                            <div class="notification-content">
+                                <div class="notification-title">数据备份完成</div>
+                                <div class="notification-text">今日凌晨3:00的数据库备份已完成。</div>
+                                <div class="notification-time">2天前</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 用户管理 -->
+        <section id="user-management" class="content-section">
+            <div class="section-header">
+                <h2><i class="fas fa-users"></i> 用户管理</h2>
+                <div class="section-actions">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="搜索用户ID、用户名、邮箱..." id="userSearch">
+                    </div>
+                    <select class="filter-select" id="userFilter">
+                        <option value="all">所有用户</option>
+                        <option value="active">活跃用户</option>
+                        <option value="inactive">未激活</option>
+                        <option value="banned">已封禁</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="exportUserData()">
+                        <i class="fas fa-download"></i> 导出用户数据
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-card">
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                        <tr>
+                            <th><input type="checkbox" id="selectAllUsers"></th>
+                            <th>用户ID</th>
+                            <th>用户名</th>
+                            <th>邮箱</th>
+                            <th>注册时间</th>
+                            <th>最后登录</th>
+                            <th>状态</th>
+                            <th>角色</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><input type="checkbox" class="user-checkbox"></td>
+                            <td>100001</td>
+                            <td>
+                                <div class="user-cell">
+                                    <div class="user-avatar-small">读</div>
+                                    <div class="user-info">
+                                        <div class="user-name">书迷小张</div>
+                                        <div class="user-id">UID: 100001</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>zhang@example.com</td>
+                            <td>2023-01-10</td>
+                            <td>2023-10-15</td>
+                            <td><span class="status active">正常</span></td>
+                            <td>读者</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-sm btn-info" title="查看详情"><i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-warning" title="编辑"><i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" title="封禁" onclick="banUser(100001)"><i
+                                            class="fas fa-ban"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="user-checkbox"></td>
+                            <td>100002</td>
+                            <td>
+                                <div class="user-cell">
+                                    <div class="user-avatar-small">作</div>
+                                    <div class="user-info">
+                                        <div class="user-name">云梦泽</div>
+                                        <div class="user-id">作者ID: 000000001</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>yunmengze@example.com</td>
+                            <td>2023-01-15</td>
+                            <td>2023-10-15</td>
+                            <td><span class="status active">正常</span></td>
+                            <td>签约作者</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-sm btn-info" title="查看详情"><i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-warning" title="编辑"><i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-success" title="升级VIP"><i class="fas fa-crown"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="user-checkbox"></td>
+                            <td>100003</td>
+                            <td>
+                                <div class="user-cell">
+                                    <div class="user-avatar-small">违</div>
+                                    <div class="user-info">
+                                        <div class="user-name">违规用户</div>
+                                        <div class="user-id">UID: 100003</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>violation@example.com</td>
+                            <td>2023-02-20</td>
+                            <td>2023-10-10</td>
+                            <td><span class="status banned">已封禁</span></td>
+                            <td>读者</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-sm btn-info" title="查看详情"><i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-success" title="解封" onclick="unbanUser(100003)"><i
+                                            class="fas fa-check"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="table-footer">
+                    <div class="batch-actions">
+                        <button class="btn btn-sm btn-danger" onclick="batchBanUsers()">批量封禁</button>
+                        <button class="btn btn-sm btn-success" onclick="batchActivateUsers()">批量激活</button>
+                        <button class="btn btn-sm btn-secondary" onclick="exportSelectedUsers()">导出选中</button>
+                    </div>
+                    <div class="pagination">
+                        <span>共 1,256 条记录</span>
+                        <button class="pagination-btn"><i class="fas fa-chevron-left"></i></button>
+                        <span class="pagination-current">1</span>
+                        <span class="pagination-total">/ 63 页</span>
+                        <button class="pagination-btn"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 作者管理 -->
+        <section id="author-management" class="content-section">
+            <div class="section-header">
+                <h2><i class="fas fa-user-edit"></i> 作者管理</h2>
+                <div class="section-actions">
+                    <button class="btn btn-primary" onclick="showAddAuthorModal()">
+                        <i class="fas fa-plus"></i> 添加作者
+                    </button>
+                </div>
+            </div>
+
+            <div class="stats-row">
+                <div class="stat-mini">
+                    <div class="stat-value">356</div>
+                    <div class="stat-label">总作者数</div>
+                </div>
+                <div class="stat-mini">
+                    <div class="stat-value">128</div>
+                    <div class="stat-label">签约作者</div>
+                </div>
+                <div class="stat-mini">
+                    <div class="stat-value">45</div>
+                    <div class="stat-label">本月新增</div>
+                </div>
+                <div class="stat-mini">
+                    <div class="stat-value">23</div>
+                    <div class="stat-label">待审核</div>
+                </div>
+            </div>
+
+            <div class="table-card">
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                        <tr>
+                            <th>作者ID</th>
+                            <th>笔名</th>
+                            <th>真实姓名</th>
+                            <th>联系方式</th>
+                            <th>签约状态</th>
+                            <th>作品数</th>
+                            <th>总收入</th>
+                            <th>最后登录</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>000000001</td>
+                            <td>云梦泽</td>
+                            <td>张某某</td>
+                            <td>138****1234</td>
+                            <td><span class="status signed">已签约</span></td>
+                            <td>3</td>
+                            <td>¥12,456.78</td>
+                            <td>2023-10-15</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="viewAuthorDetail(1)">详情</button>
+                                <button class="btn btn-sm btn-warning" onclick="editAuthorContract(1)">修改合约</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>000000002</td>
+                            <td>幻雨</td>
+                            <td>李某某</td>
+                            <td>139****5678</td>
+                            <td><span class="status unsigned">未签约</span></td>
+                            <td>2</td>
+                            <td>¥3,456.12</td>
+                            <td>2023-10-14</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="viewAuthorDetail(2)">详情</button>
+                                <button class="btn btn-sm btn-success" onclick="signAuthorContract(2)">签约</button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 作品审核 -->
+        <section id="novel-audit" class="content-section">
+            <div class="section-header">
+                <h2><i class="fas fa-clipboard-check"></i> 作品审核</h2>
+                <div class="filter-tabs">
+                    <button class="filter-tab active" data-filter="pending">待审核 (12)</button>
+                    <button class="filter-tab" data-filter="passed">已通过 (1,245)</button>
+                    <button class="filter-tab" data-filter="rejected">已拒绝 (56)</button>
+                </div>
+            </div>
+
+            <div class="audit-list">
+                <div class="audit-item">
+                    <div class="audit-header">
+                        <div class="audit-id">申请ID: #AUD20231015001</div>
+                        <div class="audit-time">提交时间: 2023-10-15 14:23</div>
+                    </div>
+                    <div class="audit-content">
+                        <div class="novel-info">
+                            <div class="novel-cover">📚</div>
+                            <div class="novel-details">
+                                <h3>《星穹传说》第45章</h3>
+                                <div class="novel-meta">
+                                    <span>作者: 云梦泽</span>
+                                    <span>字数: 3,245</span>
+                                    <span>章节: 第45章</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="audit-actions">
+                            <button class="btn btn-success" onclick="approveNovel('AUD20231015001')">
+                                <i class="fas fa-check"></i> 通过
+                            </button>
+                            <button class="btn btn-danger" onclick="rejectNovel('AUD20231015001')">
+                                <i class="fas fa-times"></i> 拒绝
+                            </button>
+                            <button class="btn btn-primary" onclick="viewNovelContent('AUD20231015001')">
+                                <i class="fas fa-eye"></i> 预览
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="audit-item">
+                    <div class="audit-header">
+                        <div class="audit-id">申请ID: #AUD20231015002</div>
+                        <div class="audit-time">提交时间: 2023-10-15 13:15</div>
+                    </div>
+                    <div class="audit-content">
+                        <div class="novel-info">
+                            <div class="novel-cover">🔮</div>
+                            <div class="novel-details">
+                                <h3>新作品《时空守望者》</h3>
+                                <div class="novel-meta">
+                                    <span>作者: 新人作者</span>
+                                    <span>分类: 科幻/穿越</span>
+                                    <span>状态: 连载</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="audit-actions">
+                            <button class="btn btn-success" onclick="approveNovel('AUD20231015002')">
+                                <i class="fas fa-check"></i> 通过
+                            </button>
+                            <button class="btn btn-danger" onclick="rejectNovel('AUD20231015002')">
+                                <i class="fas fa-times"></i> 拒绝
+                            </button>
+                            <button class="btn btn-primary" onclick="viewNovelContent('AUD20231015002')">
+                                <i class="fas fa-eye"></i> 预览
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 章节审核 -->
+        <section id="chapter-audit" class="content-section">
+            <div class="section-header">
+                <h2><i class="fas fa-file-alt"></i> 章节审核</h2>
+            </div>
+            <!-- 内容类似作品审核，显示章节列表 -->
+        </section>
+
+        <!-- 评论审核 -->
+        <section id="comment-audit" class="content-section">
+            <div class="section-header">
+                <h2><i class="fas fa-comment-check"></i> 评论审核</h2>
+            </div>
+            <!-- 显示待审核评论列表 -->
+        </section>
+
+        <!-- 平台统计 -->
+        <section id="platform-stats" class="content-section">
+            <div class="section-header">
+                <h2><i class="fas fa-chart-pie"></i> 平台统计</h2>
+            </div>
+            <!-- 显示各类统计数据图表 -->
+        </section>
+
+        <!-- 系统设置 -->
+        <section id="system-settings" class="content-section">
+            <div class="section-header">
+                <h2><i class="fas fa-sliders-h"></i> 系统设置</h2>
+            </div>
+
+            <div class="settings-tabs">
+                <div class="settings-sidebar">
+                    <div class="settings-nav active" data-target="general">基本设置</div>
+                    <div class="settings-nav" data-target="content">内容策略</div>
+                    <div class="settings-nav" data-target="finance">财务设置</div>
+                    <div class="settings-nav" data-target="security">安全设置</div>
+                    <div class="settings-nav" data-target="notification">通知设置</div>
+                </div>
+
+                <div class="settings-content">
+                    <div id="general" class="settings-panel active">
+                        <h3>基本设置</h3>
+                        <form class="settings-form">
+                            <div class="form-group">
+                                <label>网站名称</label>
+                                <input type="text" class="form-control" value="FlutterPage小说阅读平台">
+                            </div>
+                            <div class="form-group">
+                                <label>网站描述</label>
+                                <textarea class="form-control">一个专注于原创小说创作与阅读的平台</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>ICP备案号</label>
+                                <input type="text" class="form-control" value="京ICP备12345678号">
+                            </div>
+                            <button type="submit" class="btn btn-primary">保存设置</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 添加更多其他模块的内容 -->
+
+    </main>
+</div>
+
+<!-- 通知组件 -->
+<div id="notification" class="notification">
+    <i class="fas fa-check-circle"></i>
+    <span id="notificationText"></span>
+</div>
+
+<script src="../../static/js/common.js"></script>
+<script src="../../static/js/admin-dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,844 @@
+/**
+ * FlutterPage - 收入中心样式
+ * 基于公共样式扩展，包含收入统计、提现管理和图表展示
+ */
+
+/* ==================== 收入中心布局样式 ==================== */
+.income-center {
+    padding: var(--space-xl) var(--space-lg);
+}
+
+/* 页面标题区域 */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-xxl);
+    padding-bottom: var(--space-lg);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.page-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-size: var(--text-3xl);
+    color: var(--text-dark);
+    margin: 0;
+}
+
+.page-actions {
+    display: flex;
+    gap: var(--space-md);
+}
+
+/* 收入概览 */
+.income-overview {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: var(--space-lg);
+    margin-bottom: var(--space-xxl);
+}
+
+@media (max-width: 991px) {
+    .income-overview {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 余额卡片 */
+.balance-card {
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-large);
+    padding: var(--space-xl);
+    color: var(--text-white);
+    box-shadow: var(--shadow-medium);
+}
+
+.balance-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-lg);
+}
+
+.balance-header h3 {
+    margin: 0;
+    font-size: var(--text-lg);
+    font-weight: 600;
+}
+
+.balance-status {
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    font-weight: 500;
+}
+
+.balance-status.available {
+    background: rgba(255, 255, 255, 0.2);
+    color: var(--text-white);
+}
+
+.balance-amount {
+    margin-bottom: var(--space-xl);
+    text-align: center;
+}
+
+.balance-amount .amount {
+    font-size: var(--text-4xl);
+    font-weight: 800;
+    display: block;
+    line-height: 1.2;
+}
+
+.balance-amount .currency {
+    font-size: var(--text-lg);
+    opacity: 0.9;
+}
+
+.balance-actions {
+    text-align: center;
+}
+
+/* 收入卡片 */
+.income-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-lg);
+}
+
+.income-card {
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-large);
+    padding: var(--space-xl);
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+    transition: all var(--transition-normal) ease;
+    box-shadow: var(--shadow-light);
+}
+
+.income-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-medium);
+}
+
+.income-card .card-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: var(--radius-medium);
+    background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-white);
+    font-size: var(--text-xl);
+}
+
+.income-card .card-content h3 {
+    font-size: var(--text-base);
+    color: var(--text-light);
+    margin-bottom: var(--space-xs);
+    font-weight: 500;
+}
+
+.income-card .card-content .number {
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: var(--space-xs);
+}
+
+.trend {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-size: var(--text-sm);
+    font-weight: 500;
+}
+
+.trend.positive {
+    color: var(--success-color);
+}
+
+.trend.negative {
+    color: var(--error-color);
+}
+
+/* 收入图表 */
+.income-charts {
+    margin-bottom: var(--space-xxl);
+}
+
+.chart-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--space-lg);
+    margin-bottom: var(--space-lg);
+}
+
+.chart-row:last-child {
+    margin-bottom: 0;
+}
+
+@media (max-width: 1200px) {
+    .chart-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+.chart-card {
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-large);
+    box-shadow: var(--shadow-light);
+    transition: all var(--transition-normal) ease;
+}
+
+.chart-card:hover {
+    box-shadow: var(--shadow-medium);
+}
+
+.chart-card.large {
+    grid-column: 1 / -1;
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-lg);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.chart-header h4 {
+    margin: 0;
+    color: var(--text-dark);
+    font-size: var(--text-lg);
+    font-weight: 600;
+}
+
+.chart-actions select {
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-medium);
+    padding: var(--space-xs) var(--space-sm);
+    color: var(--text-dark);
+    font-size: var(--text-sm);
+    cursor: pointer;
+}
+
+.chart-body {
+    padding: var(--space-lg);
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 收入详情标签页 */
+.income-details {
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-large);
+    box-shadow: var(--shadow-light);
+    overflow: hidden;
+}
+
+.details-tabs {
+    display: flex;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.tab-btn {
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    background: none;
+    border: none;
+    padding: var(--space-lg) var(--space-xl);
+    color: var(--text-light);
+    cursor: pointer;
+    transition: all var(--transition-normal) ease;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-weight: 500;
+    border-bottom: 3px solid transparent;
+}
+
+.tab-btn:hover {
+    color: var(--primary-color);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.tab-btn.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+    background: rgba(106, 133, 182, 0.1);
+}
+
+.tab-content {
+    display: none;
+    padding: var(--space-xl);
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* 记录头部 */
+.records-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-lg);
+    padding-bottom: var(--space-md);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.search-filter {
+    display: flex;
+    gap: var(--space-md);
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.search-filter .search-box {
+    min-width: 250px;
+}
+
+.search-filter select {
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-medium);
+    padding: var(--space-sm) var(--space-md);
+    color: var(--text-dark);
+    font-size: var(--text-base);
+    min-width: 120px;
+    cursor: pointer;
+}
+
+.withdraw-summary,
+.settlement-info {
+    display: flex;
+    gap: var(--space-xl);
+}
+
+.summary-item,
+.info-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+.summary-item .label,
+.info-item .label {
+    font-size: var(--text-sm);
+    color: var(--text-light);
+}
+
+.summary-item .value,
+.info-item .value {
+    font-size: var(--text-lg);
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+/* 记录表格 */
+.records-table {
+    margin-bottom: var(--space-lg);
+}
+
+.records-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.records-table th,
+.records-table td {
+    padding: var(--space-md) var(--space-lg);
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.records-table th {
+    font-weight: 600;
+    color: var(--text-dark);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.records-table tr:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.records-table .income-type {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-small);
+    font-size: var(--text-sm);
+    font-weight: 500;
+}
+
+.income-type.chapter {
+    background: rgba(46, 213, 115, 0.1);
+    color: var(--success-color);
+}
+
+.income-type.tip {
+    background: rgba(255, 165, 2, 0.1);
+    color: var(--warning-color);
+}
+
+.income-type.vip {
+    background: rgba(116, 125, 255, 0.1);
+    color: var(--primary-color);
+}
+
+.income-type.ad {
+    background: rgba(255, 71, 87, 0.1);
+    color: var(--error-color);
+}
+
+.income-type.bonus {
+    background: rgba(155, 89, 182, 0.1);
+    color: #9b59b6;
+}
+
+.records-table .status {
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    font-weight: 500;
+}
+
+.status.completed {
+    background: rgba(46, 213, 115, 0.2);
+    color: var(--success-color);
+}
+
+.status.pending {
+    background: rgba(255, 165, 2, 0.2);
+    color: var(--warning-color);
+}
+
+.status.processing {
+    background: rgba(116, 125, 255, 0.2);
+    color: var(--primary-color);
+}
+
+.status.failed {
+    background: rgba(255, 71, 87, 0.2);
+    color: var(--error-color);
+}
+
+.records-table .amount {
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.records-table .positive {
+    color: var(--success-color);
+}
+
+.records-table .negative {
+    color: var(--error-color);
+}
+
+/* 提现模态框样式 */
+.withdraw-info {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-medium);
+    padding: var(--space-lg);
+    margin-bottom: var(--space-lg);
+}
+
+.withdraw-info .info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-sm);
+}
+
+.withdraw-info .info-item:last-child {
+    margin-bottom: 0;
+}
+
+.withdraw-info .label {
+    color: var(--text-light);
+    font-size: var(--text-sm);
+}
+
+.withdraw-info .value {
+    color: var(--text-dark);
+    font-weight: 600;
+}
+
+.withdraw-methods {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: var(--space-md);
+}
+
+.method-option {
+    cursor: pointer;
+}
+
+.method-option input[type="radio"] {
+    display: none;
+}
+
+.method-content {
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    background-color: var(--card-bg);
+    border: 2px solid var(--card-border);
+    border-radius: var(--radius-medium);
+    padding: var(--space-lg);
+    text-align: center;
+    transition: all var(--transition-normal) ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.method-option input[type="radio"]:checked + .method-content {
+    border-color: var(--primary-color);
+    background: rgba(106, 133, 182, 0.1);
+}
+
+.method-content i {
+    font-size: var(--text-2xl);
+    color: var(--primary-color);
+}
+
+.method-content span {
+    font-weight: 500;
+    color: var(--text-dark);
+}
+
+.withdraw-summary {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-medium);
+    padding: var(--space-lg);
+    margin: var(--space-lg) 0;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-sm);
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.summary-row:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.summary-row.total {
+    font-weight: 700;
+    font-size: var(--text-lg);
+}
+
+.summary-row .label {
+    color: var(--text-light);
+}
+
+.summary-row .value {
+    color: var(--text-dark);
+    font-weight: 600;
+}
+
+.summary-row.total .value {
+    color: var(--primary-color);
+}
+
+/* 图表样式 */
+.line-chart,
+.pie-chart,
+.bar-chart {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.ranking-chart,
+.reader-analysis {
+    width: 100%;
+    height: 100%;
+}
+
+.ranking-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-md);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ranking-item:last-child {
+    border-bottom: none;
+}
+
+.ranking-info {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.ranking-number {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    color: var(--text-white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--text-xs);
+    font-weight: 600;
+}
+
+.ranking-number.top-3 {
+    background: linear-gradient(45deg, #FFD700, #FFA500);
+}
+
+.ranking-title {
+    font-weight: 500;
+    color: var(--text-dark);
+}
+
+.ranking-amount {
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.reader-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-sm) 0;
+}
+
+.reader-label {
+    color: var(--text-light);
+    font-size: var(--text-sm);
+}
+
+.reader-value {
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.reader-percentage {
+    color: var(--text-light);
+    font-size: var(--text-sm);
+}
+
+/* 响应式设计 */
+@media (max-width: 991px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-lg);
+    }
+
+    .page-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .income-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .records-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--space-lg);
+    }
+
+    .search-filter {
+        justify-content: space-between;
+    }
+
+    .withdraw-summary,
+    .settlement-info {
+        justify-content: space-around;
+    }
+}
+
+@media (max-width: 767px) {
+    .income-center {
+        padding: var(--space-lg) var(--space-md);
+    }
+
+    .income-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-row {
+        grid-template-columns: 1fr;
+    }
+
+    .search-filter {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-filter .search-box {
+        min-width: auto;
+    }
+
+    .withdraw-methods {
+        grid-template-columns: 1fr;
+    }
+
+    .records-table {
+        overflow-x: auto;
+    }
+
+    .records-table table {
+        min-width: 800px;
+    }
+}
+
+@media (max-width: 575px) {
+    .income-center {
+        padding: var(--space-md) var(--space-sm);
+    }
+
+    .page-title {
+        font-size: var(--text-2xl);
+    }
+
+    .page-actions {
+        flex-direction: column;
+        gap: var(--space-sm);
+    }
+
+    .income-card {
+        padding: var(--space-lg);
+        flex-direction: column;
+        text-align: center;
+        gap: var(--space-md);
+    }
+
+    .withdraw-summary,
+    .settlement-info {
+        flex-direction: column;
+        gap: var(--space-lg);
+    }
+
+    .summary-item,
+    .info-item {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+}
+
+/* 动画效果 */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.balance-card,
+.income-card,
+.chart-card {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.income-card:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.income-card:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+/* 加载状态 */
+.loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-md);
+    color: var(--text-light);
+    padding: var(--space-xxl);
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: var(--primary-color);
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* 空状态 */
+.empty-state {
+    text-align: center;
+    padding: var(--space-xxl);
+    color: var(--text-light);
+}
+
+.empty-state-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto var(--space-lg);
+    color: var(--text-light);
+    font-size: var(--text-3xl);
+}
+
+.empty-state-title {
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-sm);
+    color: var(--text-dark);
+}
+
+.empty-state-description {
+    margin-bottom: var(--space-lg);
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}

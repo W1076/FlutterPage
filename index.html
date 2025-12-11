@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlutterPage - 登录</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../static/css/common.css">
+    <style>
+        /* 登录页面特有样式 */
+        .login-page {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color), var(--primary-color));
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: var(--space-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+            z-index: 1;
+        }
+
+        .login-card {
+            backdrop-filter: blur(12px) saturate(180%);
+            -webkit-backdrop-filter: blur(12px) saturate(180%);
+            background-color: var(--card-bg);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--card-border);
+            box-shadow: var(--shadow-heavy);
+            color: var(--text-dark);
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 60%);
+            transform: rotate(30deg);
+            z-index: -1;
+        }
+
+        .login-card-header {
+            padding: var(--space-xl) var(--space-xl) 0;
+            flex-shrink: 0;
+        }
+
+        .login-logo {
+            text-align: center;
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-lg);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .login-logo h1 {
+            font-size: var(--text-5xl);
+            font-weight: 800;
+            background: linear-gradient(45deg, var(--text-dark), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(255, 255, 255, 0.3);
+            letter-spacing: 1px;
+            margin-bottom: var(--space-sm);
+            line-height: 1.2;
+        }
+
+        .login-logo p {
+            font-size: var(--text-lg);
+            color: var(--text-light);
+            letter-spacing: 0.5px;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        /* 身份选择样式 */
+        .role-selector {
+            margin-bottom: var(--space-lg);
+            text-align: center;
+        }
+
+        .role-tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-full);
+            padding: var(--space-xs);
+            margin-bottom: var(--space-md);
+        }
+
+        .role-tab {
+            flex: 1;
+            padding: var(--space-sm) var(--space-md);
+            text-align: center;
+            border-radius: var(--radius-full);
+            cursor: pointer;
+            transition: all var(--transition-normal) ease;
+            font-weight: 500;
+            font-size: var(--text-sm);
+            user-select: none;
+        }
+
+        .role-tab.active {
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            color: var(--text-white);
+            box-shadow: var(--shadow-light);
+        }
+
+        .role-description {
+            font-size: var(--text-sm);
+            color: var(--text-light);
+            margin-bottom: var(--space-md);
+            min-height: 1.5em;
+        }
+
+        /* 表单容器 - 可滚动 */
+        .form-scroll-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 var(--space-xl) var(--space-xl);
+            max-height: 500px;
+        }
+
+        .form-scroll-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .form-scroll-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-full);
+        }
+
+        .form-scroll-container::-webkit-scrollbar-thumb {
+            background: rgba(106, 133, 182, 0.5);
+            border-radius: var(--radius-full);
+        }
+
+        .form-scroll-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(106, 133, 182, 0.7);
+        }
+
+        .auth-form {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+
+        .auth-form.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: var(--space-lg);
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: var(--space-md) var(--space-lg) var(--space-md) 50px;
+            border: none;
+            border-radius: var(--radius-full);
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            color: var(--text-dark);
+            font-size: var(--text-base);
+            transition: all var(--transition-normal) ease;
+            box-shadow: var(--shadow-light);
+        }
+
+        .input-group input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 15px rgba(106, 133, 182, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-color);
+            font-size: var(--text-xl);
+            transition: all var(--transition-normal) ease;
+        }
+
+        .input-group input:focus + i {
+            color: var(--accent-color);
+            transform: translateY(-50%) scale(1.2);
+        }
+
+        .input-group input::placeholder {
+            color: #9cadc5;
+        }
+
+        .input-error {
+            border-color: var(--error-color) !important;
+        }
+
+        .error-message {
+            color: var(--error-color);
+            font-size: var(--text-sm);
+            margin-top: var(--space-xs);
+            margin-left: var(--space-lg);
+            display: none;
+        }
+
+        .remember-forgot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-lg);
+            font-size: var(--text-sm);
+        }
+
+        .remember {
+            display: flex;
+            align-items: center;
+            color: var(--text-dark);
+        }
+
+        .remember input {
+            margin-right: var(--space-xs);
+            accent-color: var(--primary-color);
+        }
+
+        .forgot-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: all var(--transition-normal) ease;
+            font-weight: 500;
+        }
+
+        .forgot-link:hover {
+            text-decoration: underline;
+            color: var(--accent-color);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: var(--space-md);
+            border: none;
+            border-radius: var(--radius-full);
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            color: var(--text-white);
+            font-size: var(--text-lg);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-normal) ease;
+            box-shadow: var(--shadow-light);
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            margin-top: var(--space-md);
+            margin-bottom: var(--space-lg);
+        }
+
+        .login-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: var(--transition-slow);
+        }
+
+        .login-btn:hover::before {
+            left: 100%;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+            box-shadow: var(--shadow-light);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: var(--shadow-light);
+        }
+
+        .login-btn:disabled::before {
+            display: none;
+        }
+
+        .form-switch {
+            text-align: center;
+            margin-top: var(--space-md);
+            font-size: var(--text-sm);
+            color: var(--text-dark);
+            padding-top: var(--space-md);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .form-switch a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all var(--transition-normal) ease;
+            margin-left: var(--space-xs);
+            cursor: pointer;
+        }
+
+        .form-switch a:hover {
+            text-decoration: underline;
+            color: var(--accent-color);
+        }
+
+        /* 作者注册额外字段 */
+        .author-fields {
+            margin-top: var(--space-md);
+            padding-top: var(--space-md);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* 管理员提示 */
+        .admin-notice {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-medium);
+            padding: var(--space-md);
+            margin-bottom: var(--space-lg);
+            font-size: var(--text-sm);
+            color: var(--text-light);
+            text-align: center;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 500px) {
+            .login-page {
+                padding: var(--space-sm);
+            }
+
+            .login-container {
+                padding: var(--space-sm);
+            }
+
+            .login-card-header {
+                padding: var(--space-lg) var(--space-lg) 0;
+            }
+
+            .form-scroll-container {
+                padding: 0 var(--space-lg) var(--space-lg);
+            }
+
+            .login-logo h1 {
+                font-size: var(--text-4xl);
+            }
+
+            .login-logo p {
+                font-size: var(--text-base);
+            }
+
+            .role-tab {
+                padding: var(--space-xs) var(--space-sm);
+                font-size: var(--text-xs);
+            }
+
+            .remember-forgot {
+                flex-direction: column;
+                gap: var(--space-sm);
+                align-items: flex-start;
+            }
+
+            .input-group input {
+                padding: var(--space-sm) var(--space-lg) var(--space-sm) 45px;
+            }
+        }
+
+        @media (max-width: 350px) {
+            .login-logo h1 {
+                font-size: var(--text-3xl);
+            }
+
+            .login-card-header {
+                padding: var(--space-md) var(--space-md) 0;
+            }
+
+            .form-scroll-container {
+                padding: 0 var(--space-md) var(--space-md);
+            }
+
+            .role-tabs {
+                flex-direction: column;
+                gap: var(--space-xs);
+            }
+        }
+
+        /* 背景动画 */
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+    </style>
+</head>
+<body class="login-page">
+<div class="background-elements" id="backgroundElements"></div>
+
+<!-- 登录页面内容 -->
+<div class="login-container">
+    <div class="login-card">
+        <div class="login-card-header">
+            <div class="login-logo">
+                <h1>FlutterPage</h1>
+                <p>开启您的创意写作之旅</p>
+            </div>
+
+            <!-- 身份选择器 -->
+            <div class="role-selector">
+                <div class="role-tabs">
+                    <div class="role-tab active" data-role="reader" data-form="login">读者</div>
+                    <div class="role-tab" data-role="author" data-form="login">作者</div>
+                    <div class="role-tab" data-role="admin" data-form="login">管理员</div>
+                </div>
+                <div class="role-description" id="roleDescription">
+                    作为读者浏览和阅读小说
+                </div>
+            </div>
+        </div>
+
+        <!-- 表单滚动容器 -->
+        <div class="form-scroll-container" id="formScrollContainer">
+            <!-- 读者登录表单 -->
+            <form id="readerLoginForm" class="auth-form active" data-role="reader" data-form="login">
+                <div class="input-group">
+                    <input type="text" id="readerLoginUsername" placeholder="用户名或邮箱" required>
+                    <i class="fas fa-user"></i>
+                    <div class="error-message" id="readerLoginUsernameError"></div>
+                </div>
+
+                <div class="input-group">
+                    <input type="password" id="readerLoginPassword" placeholder="密码" required>
+                    <i class="fas fa-lock"></i>
+                    <div class="error-message" id="readerLoginPasswordError"></div>
+                </div>
+
+                <div class="remember-forgot">
+                    <label class="remember">
+                        <input type="checkbox" id="readerRememberMe"> 记住我
+                    </label>
+                    <a href="#" class="forgot-link" id="readerForgotPassword">忘记密码?</a>
+                </div>
+
+                <button type="submit" class="login-btn" id="readerLoginBtn">登录</button>
+
+                <div class="form-switch">
+                    <p>还没有账号? <a class="switch-link" data-role="reader" data-form="register">注册读者</a></p>
+                </div>
+            </form>
+
+            <!-- 读者注册表单 -->
+            <form id="readerRegisterForm" class="auth-form" data-role="reader" data-form="register">
+                <div class="input-group">
+                    <input type="text" id="readerRegisterUsername" placeholder="用户名" required>
+                    <i class="fas fa-user"></i>
+                    <div class="error-message" id="readerRegisterUsernameError"></div>
+                </div>
+
+                <div class="input-group">
+                    <input type="email" id="readerRegisterEmail" placeholder="邮箱地址" required>
+                    <i class="fas fa-envelope"></i>
+                    <div class="error-message" id="readerRegisterEmailError"></div>
+                </div>
+
+                <div class="input-group">
+                    <input type="password" id="readerRegisterPassword" placeholder="密码" required>
+                    <i class="fas fa-lock"></i>
+                    <div class="error-message" id="readerRegisterPasswordError"></div>
+                </div>
+
+                <div class="input-group">
+                    <input type="password" id="readerRegisterConfirmPassword" placeholder="确认密码" required>
+                    <i class="fas fa-lock"></i>
+                    <div class="error-message" id="readerRegisterConfirmPasswordError"></div>
+                </div>
+
+                <button type="submit" class="login-btn" id="readerRegisterBtn">注册读者</button>
+
+                <div class="form-switch">
+                    <p>已有账号? <a class="switch-link" data-role="reader" data-form="login">立即登录</a></p>
+                </div>
+            </form>
+
+            <!-- 作者登录表单 -->
+            <form id="authorLoginForm" class="auth-form" data-role="author" data-form="login">
+                <div class="input-group">
+                    <input type="text" id="authorLoginUsername" placeholder="用户名或邮箱" required>
+                    <i class="fas fa-user"></i>
+                    <div class="error-message" id="authorLoginUsernameError"></div>
+                </div>
+
+                <div class="input-group">
+                    <input type="password" id="authorLoginPassword" placeholder="密码" required>
+                    <i class="fas fa-lock"></i>
+                    <div class="error-message" id="authorLoginPasswordError"></div>
+                </div>
+
+                <div class="remember-forgot">
+                    <label class="remember">
+                        <input type="checkbox" id="authorRememberMe"> 记住我
+                    </label>
+                    <a href="#" class="forgot-link" id="authorForgotPassword">忘记密码?</a>
+                </div>
+
+                <button type="submit" class="login-btn" id="authorLoginBtn">登录</button>
+
+                <div class="form-switch">
+                    <p>还没有作者账号? <a class="switch-link" data-role="author" data-form="register">注册作者</a></p>
+                </div>
+            </form>
+
+            <!-- 作者注册表单 -->
+            <form id="authorRegisterForm" class="auth-form" data-role="author" data-form="register">
+                <div class="input-group">
+                    <input type="text" id="authorRegisterUsername" placeholder="用户名" required>
+                    <i class="fas fa-user"></i>
+                    <div class="error-message" id="authorRegisterUsernameError"></div>
+                </div>
+
+                <div class="input-group">
+                    <input type="email" id="authorRegisterEmail" placeholder="邮箱地址" required>
+                    <i class="fas fa-envelope"></i>
+                    <div class="error-message" id="authorRegisterEmailError"></div>
+                </div>
+
+                <div class="input-group">
+                    <input type="password" id="authorRegisterPassword" placeholder="密码" required>
+                    <i class="fas fa-lock"></i>
+                    <div class="error-message" id="authorRegisterPasswordError"></div>
+                </div>
+
+                <div class="input-group">
+                    <input type="password" id="authorRegisterConfirmPassword" placeholder="确认密码" required>
+                    <i class="fas fa-lock"></i>
+                    <div class="error-message" id="authorRegisterConfirmPasswordError"></div>
+                </div>
+
+                <!-- 作者额外信息 -->
+                <div class="author-fields">
+                    <div class="input-group">
+                        <input type="text" id="authorRegisterPenName" placeholder="笔名" required>
+                        <i class="fas fa-pen-nib"></i>
+                        <div class="error-message" id="authorRegisterPenNameError"></div>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="text" id="authorRegisterRealName" placeholder="真实姓名" required>
+                        <i class="fas fa-id-card"></i>
+                        <div class="error-message" id="authorRegisterRealNameError"></div>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="tel" id="authorRegisterPhone" placeholder="联系方式" required>
+                        <i class="fas fa-phone"></i>
+                        <div class="error-message" id="authorRegisterPhoneError"></div>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="text" id="authorRegisterIdCard" placeholder="身份证号" required>
+                        <i class="fas fa-address-card"></i>
+                        <div class="error-message" id="authorRegisterIdCardError"></div>
+                    </div>
+                </div>
+
+                <button type="submit" class="login-btn" id="authorRegisterBtn">注册作者</button>
+
+                <div class="form-switch">
+                    <p>已有作者账号? <a class="switch-link" data-role="author" data-form="login">立即登录</a></p>
+                </div>
+            </form>
+
+            <!-- 管理员登录表单 -->
+            <form id="adminLoginForm" class="auth-form" data-role="admin" data-form="login">
+                <div class="admin-notice">
+                    管理员账号由系统分配，请联系系统管理员获取账号信息
+                </div>
+
+                <div class="input-group">
+                    <input type="text" id="adminLoginUsername" placeholder="管理员账号" required>
+                    <i class="fas fa-user-shield"></i>
+                    <div class="error-message" id="adminLoginUsernameError"></div>
+                </div>
+
+                <div class="input-group">
+                    <input type="password" id="adminLoginPassword" placeholder="密码" required>
+                    <i class="fas fa-lock"></i>
+                    <div class="error-message" id="adminLoginPasswordError"></div>
+                </div>
+
+                <div class="input-group">
+                    <input type="text" id="adminUid" placeholder="管理员UID" required>
+                    <i class="fas fa-id-card"></i>
+                    <div class="error-message" id="adminUidError"></div>
+                </div>
+
+                <button type="submit" class="login-btn" id="adminLoginBtn">管理员登录</button>
+
+                <div class="form-switch">
+                    <p>管理员账号由系统分配，无法自行注册</p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 通知组件 -->
+<div class="notification" id="notification">
+    <i class="fas fa-check-circle"></i>
+    <span id="notificationText">操作成功！</span>
+</div>
+
+<script src="../static/js/common.js"></script>
+<script>
+    // 登录页面控制器
+    class LoginPageController {
+        constructor() {
+            this.currentRole = 'reader';
+            this.currentForm = 'login';
+            this.init();
+        }
+
+        init() {
+            console.log('🚀 初始化登录页面...');
+
+            // 如果已登录，跳转到主页
+            if (userManager.getCurrentUser()) {
+                utils.showNotification('您已登录，正在跳转到首页...');
+                setTimeout(() => {
+                    router.redirectToHome();
+                }, 1500);
+                return;
+            }
+
+            this.initRoleSelector();
+            this.initFormSwitches();
+            this.initFormSubmission();
+            this.scrollToTop();
+
+            console.log('✅ 登录页面初始化完成');
+        }
+
+        /**
+         * 初始化角色选择器
+         */
+        initRoleSelector() {
+            const roleTabs = document.querySelectorAll('.role-tab');
+
+            roleTabs.forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    const role = e.target.getAttribute('data-role');
+                    const form = e.target.getAttribute('data-form');
+
+                    this.switchToRole(role, form);
+                });
+            });
+        }
+
+        /**
+         * 初始化表单切换链接
+         */
+        initFormSwitches() {
+            const switchLinks = document.querySelectorAll('.switch-link');
+
+            switchLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const role = e.target.getAttribute('data-role');
+                    const form = e.target.getAttribute('data-form');
+
+                    this.switchToRole(role, form);
+                });
+            });
+        }
+
+        /**
+         * 初始化表单提交
+         */
+        initFormSubmission() {
+            // 读者登录表单
+            const readerLoginForm = document.getElementById('readerLoginForm');
+            if (readerLoginForm) {
+                readerLoginForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleLogin('reader');
+                });
+            }
+
+            // 读者注册表单
+            const readerRegisterForm = document.getElementById('readerRegisterForm');
+            if (readerRegisterForm) {
+                readerRegisterForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleRegister('reader');
+                });
+            }
+
+            // 作者登录表单
+            const authorLoginForm = document.getElementById('authorLoginForm');
+            if (authorLoginForm) {
+                authorLoginForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleLogin('author');
+                });
+            }
+
+            // 作者注册表单
+            const authorRegisterForm = document.getElementById('authorRegisterForm');
+            if (authorRegisterForm) {
+                authorRegisterForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleRegister('author');
+                });
+            }
+
+            // 管理员登录表单
+            const adminLoginForm = document.getElementById('adminLoginForm');
+            if (adminLoginForm) {
+                adminLoginForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleLogin('admin');
+                });
+            }
+
+            // 忘记密码链接
+            const forgotLinks = document.querySelectorAll('.forgot-link');
+            forgotLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    utils.showNotification('忘记密码功能将在后续版本中开放', false);
+                });
+            });
+        }
+
+        /**
+         * 切换到指定角色和表单
+         * @param {string} role - 角色 (reader, author, admin)
+         * @param {string} form - 表单类型 (login, register)
+         */
+        switchToRole(role, form = 'login') {
+            this.currentRole = role;
+            this.currentForm = form;
+
+            // 更新角色标签
+            this.updateRoleTabs(role, form);
+
+            // 更新角色描述
+            this.updateRoleDescription(role, form);
+
+            // 显示对应的表单
+            this.showForm(role, form);
+
+            // 清除所有错误信息
+            this.clearAllErrors();
+
+            // 滚动到顶部
+            this.scrollToTop();
+        }
+
+        /**
+         * 更新角色标签状态
+         */
+        updateRoleTabs(role, form) {
+            const roleTabs = document.querySelectorAll('.role-tab');
+
+            roleTabs.forEach(tab => {
+                const tabRole = tab.getAttribute('data-role');
+                const tabForm = tab.getAttribute('data-form');
+
+                if (tabRole === role && tabForm === form) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+        }
+
+        /**
+         * 更新角色描述
+         */
+        updateRoleDescription(role, form) {
+            const roleDescription = document.getElementById('roleDescription');
+            const descriptions = {
+                reader: {
+                    login: '作为读者浏览和阅读小说',
+                    register: '注册成为读者，享受阅读乐趣'
+                },
+                author: {
+                    login: '作为作者发布和管理您的小说作品',
+                    register: '注册成为作者，开始您的创作之旅'
+                },
+                admin: {
+                    login: '作为管理员管理网站内容和用户'
+                }
+            };
+
+            if (descriptions[role] && descriptions[role][form]) {
+                roleDescription.textContent = descriptions[role][form];
+            } else {
+                roleDescription.textContent = '';
+            }
+        }
+
+        /**
+         * 显示对应的表单
+         */
+        showForm(role, form) {
+            // 隐藏所有表单
+            const allForms = document.querySelectorAll('.auth-form');
+            allForms.forEach(formEl => {
+                formEl.classList.remove('active');
+            });
+
+            // 显示目标表单
+            const targetForm = document.querySelector(`.auth-form[data-role="${role}"][data-form="${form}"]`);
+            if (targetForm) {
+                setTimeout(() => {
+                    targetForm.classList.add('active');
+                }, 10);
+            }
+        }
+
+        /**
+         * 处理登录
+         */
+        async handleLogin(role) {
+            let isValid = true;
+            let loginData = {};
+
+            // 验证表单
+            if (role === 'reader') {
+                isValid = this.validateReaderLogin();
+                if (isValid) {
+                    loginData = {
+                        identifier: document.getElementById('readerLoginUsername').value.trim(),
+                        password: document.getElementById('readerLoginPassword').value,
+                        role: CONFIG.ROLES.READER
+                    };
+                }
+            } else if (role === 'author') {
+                isValid = this.validateAuthorLogin();
+                if (isValid) {
+                    loginData = {
+                        identifier: document.getElementById('authorLoginUsername').value.trim(),
+                        password: document.getElementById('authorLoginPassword').value,
+                        role: CONFIG.ROLES.AUTHOR
+                    };
+                }
+            } else if (role === 'admin') {
+                isValid = this.validateAdminLogin();
+                if (isValid) {
+                    loginData = {
+                        identifier: document.getElementById('adminLoginUsername').value.trim(),
+                        password: document.getElementById('adminLoginPassword').value,
+                        role: CONFIG.ROLES.ADMIN,
+                        uid: document.getElementById('adminUid').value.trim()
+                    };
+                }
+            }
+
+            if (!isValid) return;
+
+            const btn = this.getLoginButton(role);
+            const originalText = btn.textContent;
+
+            // 显示加载状态
+            btn.textContent = '登录中...';
+            btn.disabled = true;
+
+            try {
+                // 使用API管理器进行登录
+                const response = await apiManager.user.login(loginData);
+
+                if (response.success) {
+                    this.handleLoginSuccess(response.user, response.role);
+                } else {
+                    utils.showNotification(response.message, false);
+                }
+            } catch (error) {
+                console.error('登录错误:', error);
+                utils.showNotification('登录失败，请稍后重试', false);
+            } finally {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        /**
+         * 处理注册
+         */
+        async handleRegister(role) {
+            let isValid = true;
+            let registerData = {};
+
+            // 验证表单
+            if (role === 'reader') {
+                isValid = this.validateReaderRegister();
+                if (isValid) {
+                    registerData = {
+                        username: document.getElementById('readerRegisterUsername').value.trim(),
+                        email: document.getElementById('readerRegisterEmail').value.trim(),
+                        password: document.getElementById('readerRegisterPassword').value,
+                        role: CONFIG.ROLES.READER
+                    };
+                }
+            } else if (role === 'author') {
+                isValid = this.validateAuthorRegister();
+                if (isValid) {
+                    registerData = {
+                        username: document.getElementById('authorRegisterUsername').value.trim(),
+                        email: document.getElementById('authorRegisterEmail').value.trim(),
+                        password: document.getElementById('authorRegisterPassword').value,
+                        penName: document.getElementById('authorRegisterPenName').value.trim(),
+                        realName: document.getElementById('authorRegisterRealName').value.trim(),
+                        phone: document.getElementById('authorRegisterPhone').value.trim(),
+                        idCard: document.getElementById('authorRegisterIdCard').value.trim(),
+                        role: CONFIG.ROLES.AUTHOR
+                    };
+                }
+            }
+
+            if (!isValid) return;
+
+            const btn = this.getRegisterButton(role);
+            const originalText = btn.textContent;
+
+            // 显示加载状态
+            btn.textContent = '注册中...';
+            btn.disabled = true;
+
+            try {
+                let response;
+
+                if (role === 'reader') {
+                    response = await apiManager.user.register(registerData);
+                } else if (role === 'author') {
+                    response = await apiManager.user.registerAuthor(registerData);
+                }
+
+                if (response.success) {
+                    let message = '注册成功！';
+                    if (role === 'author' && response.authorId) {
+                        message = `作者注册成功！您的作者ID是: ${response.authorId}`;
+                    }
+
+                    utils.showNotification(message);
+
+                    // 切换到登录表单
+                    setTimeout(() => {
+                        this.switchToRole(role, 'login');
+
+                        // 自动填充用户名
+                        const usernameInput = document.getElementById(`${role}LoginUsername`);
+                        if (usernameInput) {
+                            usernameInput.value = registerData.username;
+                        }
+                    }, 1500);
+                } else {
+                    utils.showNotification(response.message, false);
+                }
+            } catch (error) {
+                console.error('注册错误:', error);
+                utils.showNotification('注册失败，请稍后重试', false);
+            } finally {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        /**
+         * 验证读者登录表单
+         */
+        validateReaderLogin() {
+            let isValid = true;
+
+            const username = document.getElementById('readerLoginUsername').value.trim();
+            const password = document.getElementById('readerLoginPassword').value;
+
+            if (!username) {
+                this.showError('readerLoginUsername', '请输入用户名或邮箱');
+                isValid = false;
+            } else {
+                this.clearError('readerLoginUsername');
+            }
+
+            if (!password) {
+                this.showError('readerLoginPassword', '请输入密码');
+                isValid = false;
+            } else {
+                this.clearError('readerLoginPassword');
+            }
+
+            return isValid;
+        }
+
+        /**
+         * 验证作者登录表单
+         */
+        validateAuthorLogin() {
+            let isValid = true;
+
+            const username = document.getElementById('authorLoginUsername').value.trim();
+            const password = document.getElementById('authorLoginPassword').value;
+
+            if (!username) {
+                this.showError('authorLoginUsername', '请输入用户名或邮箱');
+                isValid = false;
+            } else {
+                this.clearError('authorLoginUsername');
+            }
+
+            if (!password) {
+                this.showError('authorLoginPassword', '请输入密码');
+                isValid = false;
+            } else {
+                this.clearError('authorLoginPassword');
+            }
+
+            return isValid;
+        }
+
+        /**
+         * 验证管理员登录表单
+         */
+        validateAdminLogin() {
+            let isValid = true;
+
+            const username = document.getElementById('adminLoginUsername').value.trim();
+            const password = document.getElementById('adminLoginPassword').value;
+            const uid = document.getElementById('adminUid').value.trim();
+
+            if (!username) {
+                this.showError('adminLoginUsername', '请输入管理员账号');
+                isValid = false;
+            } else {
+                this.clearError('adminLoginUsername');
+            }
+
+            if (!password) {
+                this.showError('adminLoginPassword', '请输入密码');
+                isValid = false;
+            } else {
+                this.clearError('adminLoginPassword');
+            }
+
+            if (!uid) {
+                this.showError('adminUid', '请输入管理员UID');
+                isValid = false;
+            } else {
+                this.clearError('adminUid');
+            }
+
+            return isValid;
+        }
+
+        /**
+         * 验证读者注册表单
+         */
+        validateReaderRegister() {
+            let isValid = true;
+
+            const username = document.getElementById('readerRegisterUsername').value.trim();
+            const email = document.getElementById('readerRegisterEmail').value.trim();
+            const password = document.getElementById('readerRegisterPassword').value;
+            const confirmPassword = document.getElementById('readerRegisterConfirmPassword').value;
+
+            // 用户名验证
+            if (!username) {
+                this.showError('readerRegisterUsername', '请输入用户名');
+                isValid = false;
+            } else if (username.length < 3) {
+                this.showError('readerRegisterUsername', '用户名至少3个字符');
+                isValid = false;
+            } else {
+                this.clearError('readerRegisterUsername');
+            }
+
+            // 邮箱验证
+            if (!email) {
+                this.showError('readerRegisterEmail', '请输入邮箱地址');
+                isValid = false;
+            } else if (!userManager.validateEmail(email)) {
+                this.showError('readerRegisterEmail', '请输入有效的邮箱地址');
+                isValid = false;
+            } else {
+                this.clearError('readerRegisterEmail');
+            }
+
+            // 密码验证
+            if (!password) {
+                this.showError('readerRegisterPassword', '请输入密码');
+                isValid = false;
+            } else if (password.length < 6) {
+                this.showError('readerRegisterPassword', '密码至少6个字符');
+                isValid = false;
+            } else {
+                this.clearError('readerRegisterPassword');
+            }
+
+            // 确认密码验证
+            if (!confirmPassword) {
+                this.showError('readerRegisterConfirmPassword', '请确认密码');
+                isValid = false;
+            } else if (password !== confirmPassword) {
+                this.showError('readerRegisterConfirmPassword', '两次输入的密码不一致');
+                isValid = false;
+            } else {
+                this.clearError('readerRegisterConfirmPassword');
+            }
+
+            return isValid;
+        }
+
+        /**
+         * 验证作者注册表单
+         */
+        validateAuthorRegister() {
+            let isValid = true;
+
+            const username = document.getElementById('authorRegisterUsername').value.trim();
+            const email = document.getElementById('authorRegisterEmail').value.trim();
+            const password = document.getElementById('authorRegisterPassword').value;
+            const confirmPassword = document.getElementById('authorRegisterConfirmPassword').value;
+            const penName = document.getElementById('authorRegisterPenName').value.trim();
+            const realName = document.getElementById('authorRegisterRealName').value.trim();
+            const phone = document.getElementById('authorRegisterPhone').value.trim();
+            const idCard = document.getElementById('authorRegisterIdCard').value.trim();
+
+            // 用户名验证
+            if (!username) {
+                this.showError('authorRegisterUsername', '请输入用户名');
+                isValid = false;
+            } else if (username.length < 3) {
+                this.showError('authorRegisterUsername', '用户名至少3个字符');
+                isValid = false;
+            } else {
+                this.clearError('authorRegisterUsername');
+            }
+
+            // 邮箱验证
+            if (!email) {
+                this.showError('authorRegisterEmail', '请输入邮箱地址');
+                isValid = false;
+            } else if (!userManager.validateEmail(email)) {
+                this.showError('authorRegisterEmail', '请输入有效的邮箱地址');
+                isValid = false;
+            } else {
+                this.clearError('authorRegisterEmail');
+            }
+
+            // 密码验证
+            if (!password) {
+                this.showError('authorRegisterPassword', '请输入密码');
+                isValid = false;
+            } else if (password.length < 6) {
+                this.showError('authorRegisterPassword', '密码至少6个字符');
+                isValid = false;
+            } else {
+                this.clearError('authorRegisterPassword');
+            }
+
+            // 确认密码验证
+            if (!confirmPassword) {
+                this.showError('authorRegisterConfirmPassword', '请确认密码');
+                isValid = false;
+            } else if (password !== confirmPassword) {
+                this.showError('authorRegisterConfirmPassword', '两次输入的密码不一致');
+                isValid = false;
+            } else {
+                this.clearError('authorRegisterConfirmPassword');
+            }
+
+            // 笔名验证
+            if (!penName) {
+                this.showError('authorRegisterPenName', '请输入笔名');
+                isValid = false;
+            } else if (penName.length < 2) {
+                this.showError('authorRegisterPenName', '笔名至少2个字符');
+                isValid = false;
+            } else {
+                this.clearError('authorRegisterPenName');
+            }
+
+            // 真实姓名验证
+            if (!realName) {
+                this.showError('authorRegisterRealName', '请输入真实姓名');
+                isValid = false;
+            } else {
+                this.clearError('authorRegisterRealName');
+            }
+
+            // 联系方式验证
+            if (!phone) {
+                this.showError('authorRegisterPhone', '请输入联系方式');
+                isValid = false;
+            } else if (!userManager.validatePhone(phone)) {
+                this.showError('authorRegisterPhone', '请输入有效的手机号码');
+                isValid = false;
+            } else {
+                this.clearError('authorRegisterPhone');
+            }
+
+            // 身份证号验证
+            if (!idCard) {
+                this.showError('authorRegisterIdCard', '请输入身份证号');
+                isValid = false;
+            } else if (!userManager.validateIdCard(idCard)) {
+                this.showError('authorRegisterIdCard', '请输入有效的身份证号');
+                isValid = false;
+            } else {
+                this.clearError('authorRegisterIdCard');
+            }
+
+            return isValid;
+        }
+
+        /**
+         * 登录成功处理
+         */
+        handleLoginSuccess(userData, role) {
+            utils.showNotification('登录成功！正在跳转...');
+
+            // 根据角色跳转到不同页面
+            setTimeout(() => {
+                if (role === CONFIG.ROLES.AUTHOR) {
+                    // 作者跳转到作者仪表板
+                    window.location.href = 'author/author-dashboard.html';
+                } else if (role === CONFIG.ROLES.ADMIN) {
+                    // 管理员没有单独页面，跳转到首页
+                    utils.showNotification('管理员页面暂未开放，跳转到首页');
+                    window.location.href = 'home.html';
+                } else {
+                    // 读者跳转到首页
+                    window.location.href = 'home.html';
+                }
+            }, 1500);
+        }
+
+        /**
+         * 获取登录按钮
+         */
+        getLoginButton(role) {
+            switch (role) {
+                case 'reader':
+                    return document.getElementById('readerLoginBtn');
+                case 'author':
+                    return document.getElementById('authorLoginBtn');
+                case 'admin':
+                    return document.getElementById('adminLoginBtn');
+                default:
+                    return null;
+            }
+        }
+
+        /**
+         * 获取注册按钮
+         */
+        getRegisterButton(role) {
+            switch (role) {
+                case 'reader':
+                    return document.getElementById('readerRegisterBtn');
+                case 'author':
+                    return document.getElementById('authorRegisterBtn');
+                default:
+                    return null;
+            }
+        }
+
+        /**
+         * 显示错误信息
+         */
+        showError(inputId, message) {
+            const input = document.getElementById(inputId);
+            const errorElement = document.getElementById(`${inputId}Error`);
+
+            if (input && errorElement) {
+                input.classList.add('input-error');
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+            }
+        }
+
+        /**
+         * 清除错误信息
+         */
+        clearError(inputId) {
+            const input = document.getElementById(inputId);
+            const errorElement = document.getElementById(`${inputId}Error`);
+
+            if (input && errorElement) {
+                input.classList.remove('input-error');
+                errorElement.style.display = 'none';
+            }
+        }
+
+        /**
+         * 清除所有错误信息
+         */
+        clearAllErrors() {
+            const errorMessages = document.querySelectorAll('.error-message');
+            const errorInputs = document.querySelectorAll('.input-error');
+
+            errorMessages.forEach(error => {
+                error.style.display = 'none';
+            });
+
+            errorInputs.forEach(input => {
+                input.classList.remove('input-error');
+            });
+        }
+
+        /**
+         * 滚动到顶部
+         */
+        scrollToTop() {
+            const scrollContainer = document.getElementById('formScrollContainer');
+            if (scrollContainer) {
+                scrollContainer.scrollTop = 0;
+            }
+        }
+    }
+
+    // 页面初始化
+    document.addEventListener('DOMContentLoaded', function () {
+        window.loginController = new LoginPageController();
+
+        // 页面特定初始化函数
+        window.initPage = function () {
+            console.log('📄 登录页面初始化完成');
+        };
+    });
+</script>
+</body>
+</html>

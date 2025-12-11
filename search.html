@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlutterPage - 搜索</title>
+    <!-- 引入公共样式 -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+    <!-- 引入专有搜索模块样式 -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/search.css') }}">
+</head>
+<body>
+<div class="background-elements" id="backgroundElements"></div>
+
+<!-- 导航栏 -->
+<nav class="navbar">
+    <div class="logo">
+        <h1>FlutterPage</h1>
+    </div>
+
+    <div class="nav-links">
+        <a href="{{ url_for('home') }}"><i class="fas fa-home"></i> 首页</a>
+        <a href="{{ url_for('book_list') }}"><i class="fas fa-layer-group"></i> 分类</a>
+        <a href="{{ url_for('search') }}" class="active"><i class="fas fa-search"></i> 搜索</a>
+        <a href="#"><i class="fas fa-book"></i> 书库</a>
+    </div>
+
+    <div class="user-actions">
+        <div class="user-info">
+            <div class="user-avatar" id="userAvatar">读</div>
+            <span id="usernameDisplay">游客</span>
+            <button class="logout-btn" id="logoutBtn">退出</button>
+        </div>
+    </div>
+</nav>
+
+<!-- 主内容区域 -->
+<div class="main-container">
+    <!-- 搜索头部 -->
+    <div class="search-header">
+        <div class="search-box-large">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="搜索作品、作者、标签..." autocomplete="off">
+            <button id="searchBtn">搜索</button>
+            <div class="search-suggestions" id="searchSuggestions">
+                <!-- 搜索建议将通过JavaScript动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 搜索筛选 -->
+    <div class="search-filters">
+        <div class="filter-group">
+            <label>搜索范围:</label>
+            <div class="filter-options">
+                <label class="filter-option">
+                    <input type="radio" name="searchScope" value="all" checked> 全部
+                </label>
+                <label class="filter-option">
+                    <input type="radio" name="searchScope" value="title"> 作品名
+                </label>
+                <label class="filter-option">
+                    <input type="radio" name="searchScope" value="author"> 作者
+                </label>
+                <label class="filter-option">
+                    <input type="radio" name="searchScope" value="tag"> 标签
+                </label>
+            </div>
+        </div>
+
+        <div class="filter-group">
+            <label>作品类型:</label>
+            <div class="filter-options">
+                <label class="filter-option">
+                    <input type="checkbox" name="genre" value="all" checked> 全部
+                </label>
+                <label class="filter-option">
+                    <input type="checkbox" name="genre" value="玄幻"> 玄幻
+                </label>
+                <label class="filter-option">
+                    <input type="checkbox" name="genre" value="都市"> 都市
+                </label>
+                <label class="filter-option">
+                    <input type="checkbox" name="genre" value="言情"> 言情
+                </label>
+                <label class="filter-option">
+                    <input type="checkbox" name="genre" value="科幻"> 科幻
+                </label>
+                <label class="filter-option">
+                    <input type="checkbox" name="genre" value="历史"> 历史
+                </label>
+            </div>
+        </div>
+
+        <div class="filter-group">
+            <label>排序方式:</label>
+            <div class="filter-options">
+                <label class="filter-option">
+                    <input type="radio" name="sortBy" value="relevance" checked> 相关度
+                </label>
+                <label class="filter-option">
+                    <input type="radio" name="sortBy" value="popular"> 人气
+                </label>
+                <label class="filter-option">
+                    <input type="radio" name="sortBy" value="update"> 更新时间
+                </label>
+                <label class="filter-option">
+                    <input type="radio" name="sortBy" value="rating"> 评分
+                </label>
+            </div>
+        </div>
+
+        <div class="filter-actions">
+            <button id="resetFilters" class="filter-btn secondary">重置筛选</button>
+            <button id="applyFilters" class="filter-btn primary">应用筛选</button>
+        </div>
+    </div>
+
+    <!-- 搜索历史 -->
+    <div class="search-history" id="searchHistory">
+        <div class="history-header">
+            <h3><i class="fas fa-history"></i> 搜索历史</h3>
+            <button id="clearHistory">清空</button>
+        </div>
+        <div class="history-tags" id="historyTags">
+            <!-- 搜索历史将通过JavaScript动态生成 -->
+        </div>
+    </div>
+
+    <!-- 热门搜索 -->
+    <div class="popular-searches">
+        <h3><i class="fas fa-fire"></i> 热门搜索</h3>
+        <div class="popular-tags" id="popularTags">
+            <!-- 热门搜索将通过JavaScript动态生成 -->
+        </div>
+    </div>
+
+    <!-- 搜索结果 -->
+    <div class="search-results" id="searchResults">
+        <div class="results-header">
+            <h2 id="resultsTitle">请输入搜索关键词</h2>
+            <div class="results-count" id="resultsCount"></div>
+        </div>
+
+        <div class="view-toggle">
+            <button id="listView" class="view-btn active" title="列表视图">
+                <i class="fas fa-list"></i>
+            </button>
+            <button id="gridView" class="view-btn" title="网格视图">
+                <i class="fas fa-th"></i>
+            </button>
+        </div>
+
+        <div class="results-container list-view" id="resultsContainer">
+            <!-- 搜索结果将通过JavaScript动态生成 -->
+            <div class="no-results" id="noResults">
+                <div class="no-results-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h3>暂无搜索结果</h3>
+                <p>尝试使用其他关键词或调整筛选条件</p>
+                <button id="backToSearch" class="action-btn primary">返回搜索</button>
+            </div>
+        </div>
+
+        <!-- 分页 -->
+        <div class="pagination" id="pagination">
+            <!-- 分页将通过JavaScript动态生成 -->
+        </div>
+    </div>
+</div>
+
+<!-- 通知组件 -->
+<div class="notification" id="notification">
+    <i class="fas fa-check-circle"></i>
+    <span id="notificationText">操作成功！</span>
+</div>
+
+<!-- 引入公共JavaScript文件 -->
+<script src="{{ url_for('static', filename='js/common.js') }}"></script>
+<script src="{{ url_for('static', filename='js/search.js') }}"></script>
+</body>
+</html>

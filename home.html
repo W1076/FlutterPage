@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlutterPage - 发现好书</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 修改CSS链接 -->
+    <link rel="stylesheet" href="../static/css/common.css">
+    <link rel="stylesheet" href="../static/css/home.css">
+</head>
+<body>
+<div class="background-elements" id="backgroundElements"></div>
+
+<!-- 导航栏 -->
+<nav class="navbar">
+    <div class="logo">
+        <h1>FlutterPage</h1>
+    </div>
+
+    <div class="nav-links">
+        <a href="home.html" class="active"><i class="fas fa-home"></i> 首页</a>
+        <a href="book-list.html"><i class="fas fa-layer-group"></i> 分类</a>
+        <a href="search.html"><i class="fas fa-search"></i> 搜索</a>
+        <a href="#" id="myBooksLink"><i class="fas fa-book"></i> 我的书库</a>
+    </div>
+
+    <div class="user-actions">
+        <form action="search.html" method="get" class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" name="q" placeholder="搜索作品、作者" id="navSearchInput">
+        </form>
+        <div class="user-info">
+            <div class="user-avatar" id="userAvatar">读</div>
+            <span id="usernameDisplay">游客</span>
+            <button class="logout-btn" id="logoutBtn">退出</button>
+        </div>
+    </div>
+</nav>
+
+<!-- 主内容区域 -->
+<div class="main-container">
+    <!-- 欢迎横幅 -->
+    <div class="welcome-banner">
+        <div class="welcome-text">
+            <h2>欢迎回来，<span id="welcomeUsername">读者</span>！</h2>
+            <p>继续探索属于你的故事世界，发现更多精彩内容。今天想读点什么？</p>
+        </div>
+        <button class="continue-reading-btn" id="continueReadingBtn">
+            <i class="fas fa-play-circle"></i> 继续阅读
+        </button>
+    </div>
+
+    <!-- 快速导航 -->
+    <div class="quick-nav">
+        <a href="book-list.html" class="quick-nav-item">
+            <i class="fas fa-layer-group quick-nav-icon"></i>
+            <div class="quick-nav-title">分类浏览</div>
+            <div class="quick-nav-desc">按分类发现好书</div>
+        </a>
+        <a href="search.html" class="quick-nav-item">
+            <i class="fas fa-search quick-nav-icon"></i>
+            <div class="quick-nav-title">搜索作品</div>
+            <div class="quick-nav-desc">精准查找你想看的</div>
+        </a>
+        <a href="#" class="quick-nav-item" id="randomBookLink">
+            <i class="fas fa-random quick-nav-icon"></i>
+            <div class="quick-nav-title">随机推荐</div>
+            <div class="quick-nav-desc">发现意想不到的好书</div>
+        </a>
+        <a href="#" class="quick-nav-item" id="authorListLink">
+            <i class="fas fa-user-edit quick-nav-icon"></i>
+            <div class="quick-nav-title">作者榜单</div>
+            <div class="quick-nav-desc">关注优秀创作者</div>
+        </a>
+    </div>
+
+    <!-- 阅读进度 -->
+    <div class="reading-progress-section" id="readingProgressSection" style="display: none;">
+        <div class="section-header">
+            <div class="section-title">
+                <i class="fas fa-history"></i>
+                <h2>继续阅读</h2>
+            </div>
+            <a href="#" class="view-all" id="viewAllProgress">查看全部 <i class="fas fa-chevron-right"></i></a>
+        </div>
+        <div class="progress-books" id="progressBooksList">
+            <!-- 阅读进度书籍将通过JavaScript动态生成 -->
+        </div>
+    </div>
+
+    <!-- 热门推荐 -->
+    <div class="bookshelf-section">
+        <div class="bookshelf-header">
+            <div class="section-title">
+                <i class="fas fa-fire"></i>
+                <h2>热门推荐</h2>
+            </div>
+            <a href="book-list.html" class="view-all">查看全部 <i class="fas fa-chevron-right"></i></a>
+        </div>
+
+        <div class="books-grid" id="hotBooksGrid">
+            <!-- 热门推荐书籍将通过JavaScript动态生成 -->
+        </div>
+    </div>
+
+    <!-- 新书榜单 -->
+    <div class="bookshelf-section">
+        <div class="bookshelf-header">
+            <div class="section-title">
+                <i class="fas fa-star"></i>
+                <h2>新书榜单</h2>
+            </div>
+            <a href="book-list.html" class="view-all">查看全部 <i class="fas fa-chevron-right"></i></a>
+        </div>
+
+        <div class="books-grid" id="newBooksGrid">
+            <!-- 新书榜单书籍将通过JavaScript动态生成 -->
+        </div>
+    </div>
+
+    <!-- 热门作者 -->
+    <div class="bookshelf-section">
+        <div class="bookshelf-header">
+            <div class="section-title">
+                <i class="fas fa-user-edit"></i>
+                <h2>热门作者</h2>
+            </div>
+            <a href="#" class="view-all" id="viewAllAuthors">查看全部 <i class="fas fa-chevron-right"></i></a>
+        </div>
+
+        <div class="authors-row" id="authorsRow">
+            <!-- 作者卡片将通过JavaScript动态生成 -->
+        </div>
+    </div>
+
+    <!-- 为您推荐 -->
+    <div class="bookshelf-section">
+        <div class="bookshelf-header">
+            <div class="section-title">
+                <i class="fas fa-heart"></i>
+                <h2>为您推荐</h2>
+            </div>
+            <a href="#" class="view-all" id="refreshRecommendations">换一换 <i class="fas fa-redo"></i></a>
+        </div>
+
+        <div class="books-grid" id="recommendedBooksGrid">
+            <!-- 推荐书籍将通过JavaScript动态生成 -->
+        </div>
+    </div>
+</div>
+
+<!-- 通知组件 -->
+<div class="notification" id="notification">
+    <i class="fas fa-check-circle"></i>
+    <span id="notificationText">操作成功！</span>
+</div>
+
+<!-- 修改JS链接 -->
+<script src="../static/js/common.js"></script>
+<script src="../static/js/home.js"></script>
+</body>
+</html>

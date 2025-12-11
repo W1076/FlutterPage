@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlutterPage - 评论系统</title>
+    <!-- 引入公共样式 -->
+    <link rel="stylesheet" href="../static/css/common.css">
+    <!-- 引入章节阅读页特有样式 -->
+    <link rel="stylesheet" href="../static/css/comments-section.css">
+
+</head>
+<body>
+<div class="background-elements" id="backgroundElements"></div>
+
+<!-- 导航栏 -->
+<nav class="navbar">
+    <div class="logo">
+        <h1>FlutterPage</h1>
+    </div>
+
+    <div class="nav-links">
+        <a href="{{ url_for('home') }}"><i class="fas fa-home"></i> 首页</a>
+        <a href="{{ url_for('book_list') }}"><i class="fas fa-layer-group"></i> 分类</a>
+        <a href="{{ url_for('search') }}"><i class="fas fa-search"></i> 搜索</a>
+        <a href="#" id="currentBookLink"><i class="fas fa-book"></i> 书籍详情</a>
+        <a href="#" id="continueReadingLink"><i class="fas fa-book-reader"></i> 继续阅读</a>
+    </div>
+
+    <div class="user-actions">
+        <div class="user-info">
+            <div class="user-avatar" id="userAvatar">读</div>
+            <span id="usernameDisplay">游客</span>
+            <button class="logout-btn" id="logoutBtn">退出</button>
+        </div>
+    </div>
+</nav>
+
+<!-- 主内容区域 -->
+<div class="main-container">
+    <!-- 返回链接 -->
+    <div class="comments-nav">
+        <a href="#" class="back-link" id="backToBook">
+            <i class="fas fa-arrow-left"></i> 返回书籍详情
+        </a>
+    </div>
+
+    <!-- 书籍信息 -->
+    <div class="book-header">
+        <div class="book-cover-medium">
+            <i class="fas fa-book"></i>
+        </div>
+        <div class="book-header-info">
+            <h1 id="bookTitle">星辰轨迹</h1>
+            <p class="book-author">作者：云梦泽</p>
+            <div class="book-stats">
+                <span><i class="fas fa-eye"></i> <span id="bookViews">245.8万</span></span>
+                <span><i class="fas fa-bookmark"></i> <span id="bookRating">8.9</span></span>
+                <span><i class="fas fa-comment"></i> <span id="bookComments">1.2万</span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 评论区域 -->
+    <div class="comments-section">
+        <div class="comments-header">
+            <h2><i class="fas fa-comments"></i> 读者评论 <span class="comments-count" id="commentsCount">(1,234)</span>
+            </h2>
+            <div class="sort-options">
+                <button class="sort-btn active" data-sort="newest">最新</button>
+                <button class="sort-btn" data-sort="hottest">最热</button>
+            </div>
+        </div>
+
+        <!-- 发表评论表单 -->
+        <div class="comment-form-container">
+            <div class="user-avatar-small">
+                <span id="commentUserAvatar">读</span>
+            </div>
+            <div class="comment-form">
+                <textarea id="commentInput" placeholder="写下您的评论...（文明发言，理性评论）"></textarea>
+                <div class="comment-actions">
+                    <div class="comment-tips">
+                        <span>评论字数限制：1000字以内</span>
+                    </div>
+                    <button id="submitComment" class="submit-btn">发表评论</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 评论列表 -->
+        <div class="comments-list" id="commentsList">
+            <!-- 评论将通过JavaScript动态生成 -->
+        </div>
+
+        <!-- 加载更多 -->
+        <div class="load-more" id="loadMore">
+            <button id="loadMoreBtn">加载更多评论</button>
+        </div>
+    </div>
+</div>
+
+<!-- 通知组件 -->
+<div class="notification" id="notification">
+    <i class="fas fa-check-circle"></i>
+    <span id="notificationText">操作成功！</span>
+</div>
+
+<!-- 引入公共JavaScript文件 -->
+<script src="../static/js/common.js"></script>
+<script src="../static/js/comments-section.js"></script>
+</body>
+</html>

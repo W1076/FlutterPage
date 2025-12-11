@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlutterPage - 小说列表</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 引入公共样式 -->
+    <link rel="stylesheet" href="../static/css/common.css">
+    <!-- 引入小说列表页特有样式 -->
+    <link rel="stylesheet" href="../static/css/book-list.css">
+</head>
+<body>
+<div class="background-elements" id="backgroundElements"></div>
+
+<!-- 导航栏 -->
+<nav class="navbar">
+    <div class="logo">
+        <h1>FlutterPage</h1>
+    </div>
+
+    <div class="nav-links">
+        <a href="home.html"><i class="fas fa-home"></i> 首页</a>
+        <a href="book-list.html" class="active"><i class="fas fa-layer-group"></i> 分类</a>
+        <a href="search.html"><i class="fas fa-search"></i> 搜索</a>
+        <a href="#" id="myCollectionLink"><i class="fas fa-heart"></i> 我的收藏</a>
+    </div>
+
+    <div class="user-actions">
+        <form action="search.html" method="get" class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" name="q" placeholder="搜索作品、作者" id="navSearchInput">
+        </form>
+        <div class="user-info">
+            <div class="user-avatar" id="userAvatar">读</div>
+            <span id="usernameDisplay">游客</span>
+            <button class="logout-btn" id="logoutBtn">退出</button>
+        </div>
+    </div>
+</nav>
+
+<!-- 主内容区域 -->
+<div class="main-container">
+    <!-- 页面标题和操作 -->
+    <div class="page-header">
+        <div class="page-title">
+            <i class="fas fa-book"></i>
+            <h2>小说书库</h2>
+        </div>
+
+        <div class="page-actions">
+            <button class="btn btn-secondary" id="toggleFiltersBtn">
+                <i class="fas fa-filter"></i> 高级筛选
+            </button>
+            <div class="view-toggle">
+                <button class="view-btn active" id="gridViewBtn" title="网格视图">
+                    <i class="fas fa-th"></i>
+                </button>
+                <button class="view-btn" id="listViewBtn" title="列表视图">
+                    <i class="fas fa-list"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 高级筛选 -->
+    <div class="advanced-filters" id="advancedFilters">
+        <div class="filter-row">
+            <div class="filter-group">
+                <label class="filter-label">作品状态</label>
+                <div class="filter-options">
+                    <label class="filter-option">
+                        <input type="checkbox" name="status" value="all" checked> 全部
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" name="status" value="serial"> 连载中
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" name="status" value="complete"> 已完结
+                    </label>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <label class="filter-label">字数范围</label>
+                <div class="filter-options">
+                    <label class="filter-option">
+                        <input type="checkbox" name="wordCount" value="all" checked> 全部
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" name="wordCount" value="short"> 短篇
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" name="wordCount" value="medium"> 中篇
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" name="wordCount" value="long"> 长篇
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="filter-row">
+            <div class="filter-group">
+                <label class="filter-label">更新时间</label>
+                <div class="filter-options">
+                    <label class="filter-option">
+                        <input type="radio" name="updateTime" value="all" checked> 全部
+                    </label>
+                    <label class="filter-option">
+                        <input type="radio" name="updateTime" value="week"> 近一周
+                    </label>
+                    <label class="filter-option">
+                        <input type="radio" name="updateTime" value="month"> 近一月
+                    </label>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <label class="filter-label">评分范围</label>
+                <div class="filter-options">
+                    <label class="filter-option">
+                        <input type="radio" name="rating" value="all" checked> 全部
+                    </label>
+                    <label class="filter-option">
+                        <input type="radio" name="rating" value="high"> 8分以上
+                    </label>
+                    <label class="filter-option">
+                        <input type="radio" name="rating" value="medium"> 6-8分
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="filter-actions">
+            <button class="btn btn-secondary" id="resetFiltersBtn">重置筛选</button>
+            <button class="btn btn-primary" id="applyFiltersBtn">应用筛选</button>
+        </div>
+    </div>
+
+    <!-- 分类导航 -->
+    <div class="category-nav">
+        <div class="category-item active" data-category="all">全部</div>
+        <div class="category-item" data-category="玄幻">玄幻</div>
+        <div class="category-item" data-category="都市">都市</div>
+        <div class="category-item" data-category="仙侠">仙侠</div>
+        <div class="category-item" data-category="科幻">科幻</div>
+        <div class="category-item" data-category="悬疑">悬疑</div>
+        <div class="category-item" data-category="历史">历史</div>
+        <div class="category-item" data-category="武侠">武侠</div>
+        <div class="category-item" data-category="轻小说">轻小说</div>
+        <div class="category-item" data-category="短篇">短篇</div>
+    </div>
+
+    <!-- 排序选项 -->
+    <div class="sort-options">
+        <button class="sort-btn active" data-sort="default">默认排序</button>
+        <button class="sort-btn" data-sort="popular">人气最高</button>
+        <button class="sort-btn" data-sort="update">最新更新</button>
+        <button class="sort-btn" data-sort="rating">评分最高</button>
+        <button class="sort-btn" data-sort="chapter">章节最多</button>
+    </div>
+
+    <!-- 小说列表 -->
+    <div class="books-grid grid-view" id="booksGrid">
+        <!-- 书籍卡片将通过JavaScript动态生成 -->
+    </div>
+
+    <!-- 分页组件 -->
+    <div class="pagination" id="pagination">
+        <button id="prevPage" disabled><i class="fas fa-chevron-left"></i> 上一页</button>
+        <div class="page-numbers" id="pageNumbers">
+            <!-- 页码将通过JavaScript动态生成 -->
+        </div>
+        <button id="nextPage">下一页 <i class="fas fa-chevron-right"></i></button>
+    </div>
+</div>
+
+<!-- 通知组件 -->
+<div class="notification" id="notification">
+    <i class="fas fa-check-circle"></i>
+    <span id="notificationText">操作成功！</span>
+</div>
+
+<!-- 引入公共JavaScript文件 -->
+<script src="../static/js/common.js"></script>
+<!-- 引入小说列表页特有JavaScript文件 -->
+<script src="../static/js/book-list.js"></script>
+</body>
+</html>

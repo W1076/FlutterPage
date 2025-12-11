@@ -1,0 +1,284 @@
+/* writing-settings.css */
+
+/* 写作设置页面样式 */
+.writing-settings {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* 设置内容布局 */
+.settings-content {
+    display: flex;
+    gap: var(--space-xl);
+    margin-top: var(--space-lg);
+}
+
+/* 设置导航 */
+.settings-nav {
+    flex: 0 0 280px;
+    backdrop-filter: blur(12px) saturate(180%);
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-large);
+    padding: var(--space-lg);
+    height: fit-content;
+    position: sticky;
+    top: 100px;
+}
+
+.nav-group {
+    margin-bottom: var(--space-xl);
+}
+
+.nav-group:last-child {
+    margin-bottom: 0;
+}
+
+.nav-group h3 {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--text-light);
+    margin-bottom: var(--space-md);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    width: 100%;
+    padding: var(--space-md);
+    border: none;
+    background: transparent;
+    color: var(--text-dark);
+    text-align: left;
+    border-radius: var(--radius-medium);
+    cursor: pointer;
+    transition: all var(--transition-normal) ease;
+    margin-bottom: var(--space-xs);
+}
+
+.nav-item:last-child {
+    margin-bottom: 0;
+}
+
+.nav-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.nav-item.active {
+    background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+    color: var(--text-white);
+    box-shadow: var(--shadow-light);
+}
+
+.nav-item i {
+    width: 20px;
+    text-align: center;
+}
+
+/* 设置面板 */
+.settings-panels {
+    flex: 1;
+}
+
+.settings-panel {
+    backdrop-filter: blur(12px) saturate(180%);
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-large);
+    padding: var(--space-xl);
+    margin-bottom: var(--space-xl);
+    display: none;
+}
+
+.settings-panel.active {
+    display: block;
+}
+
+.panel-header {
+    margin-bottom: var(--space-xl);
+    padding-bottom: var(--space-md);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.panel-header h3 {
+    font-size: var(--text-xl);
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: var(--space-xs);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.panel-header p {
+    color: var(--text-light);
+    font-size: var(--text-base);
+}
+
+/* 表单样式增强 */
+.form-row {
+    display: flex;
+    gap: var(--space-lg);
+    margin-bottom: var(--space-lg);
+}
+
+.form-row .form-group {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.range-input {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.range-input input[type="range"] {
+    flex: 1;
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.3);
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.range-input input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    cursor: pointer;
+}
+
+.range-input span {
+    min-width: 60px;
+    text-align: right;
+    font-weight: 500;
+}
+
+.input-with-unit {
+    position: relative;
+}
+
+.input-with-unit .unit {
+    position: absolute;
+    right: var(--space-md);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-light);
+    font-size: var(--text-sm);
+}
+
+.time-picker {
+    display: flex;
+    gap: var(--space-md);
+    align-items: center;
+}
+
+.time-picker .form-control {
+    flex: 0 0 120px;
+}
+
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.checkbox-group .checkbox-label {
+    margin-bottom: 0;
+}
+
+/* 自定义复选框样式 */
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin-bottom: var(--space-sm);
+    font-weight: 500;
+}
+
+.checkbox-label input[type="checkbox"] {
+    display: none;
+}
+
+.checkmark {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--card-border);
+    border-radius: var(--radius-small);
+    margin-right: var(--space-sm);
+    position: relative;
+    transition: all var(--transition-normal) ease;
+}
+
+.checkbox-label input[type="checkbox"]:checked + .checkmark {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.checkbox-label input[type="checkbox"]:checked + .checkmark::after {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.checkbox-label:hover .checkmark {
+    border-color: var(--primary-color);
+}
+
+/* 表单操作按钮 */
+.form-actions {
+    display: flex;
+    gap: var(--space-md);
+    margin-top: var(--space-xl);
+    padding-top: var(--space-lg);
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* 响应式设计 */
+@media (max-width: 991px) {
+    .settings-content {
+        flex-direction: column;
+    }
+
+    .settings-nav {
+        position: static;
+        flex: none;
+    }
+
+    .form-row {
+        flex-direction: column;
+        gap: var(--space-md);
+    }
+}
+
+@media (max-width: 767px) {
+    .settings-panel {
+        padding: var(--space-lg);
+    }
+
+    .panel-header h3 {
+        font-size: var(--text-lg);
+    }
+
+    .time-picker {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .time-picker .form-control {
+        flex: none;
+        width: 100%;
+    }
+}

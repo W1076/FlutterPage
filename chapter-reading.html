@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlutterPage - 章节阅读</title>
+    <!-- 引入公共样式 -->
+    <link rel="stylesheet" href="../static/css/common.css">
+    <!-- 引入章节阅读页特有样式 -->
+    <link rel="stylesheet" href="../static/css/chapter-reading.css">
+    <!-- 引入Font Awesome图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<!-- 背景动画元素 -->
+<div class="background-elements" id="backgroundElements"></div>
+
+<!-- 导航栏 -->
+<nav class="navbar">
+    <div class="logo">
+        <h1>FlutterPage</h1>
+    </div>
+
+    <div class="nav-links">
+        <a href="home.html"><i class="fas fa-home"></i> 首页</a>
+        <a href="book-list.html"><i class="fas fa-layer-group"></i> 分类</a>
+        <a href="search.html"><i class="fas fa-search"></i> 搜索</a>
+        <a href="#" id="currentBookLink"><i class="fas fa-book"></i> 当前书籍</a>
+    </div>
+
+    <div class="user-actions">
+        <div class="user-info">
+            <div class="user-avatar" id="userAvatar">读</div>
+            <span id="usernameDisplay">游客</span>
+            <button class="logout-btn" id="logoutBtn">退出</button>
+        </div>
+    </div>
+</nav>
+
+<!-- 章节阅读区域 -->
+<div class="reading-container" id="readingContainer">
+    <!-- 返回链接 -->
+    <div class="reading-nav">
+        <a href="#" class="back-link" id="backToBook">
+            <i class="fas fa-arrow-left"></i> 返回书籍详情
+        </a>
+    </div>
+
+    <div class="reading-header">
+        <div class="book-info">
+            <h1 id="bookTitle">星辰轨迹</h1>
+            <h2 id="chapterTitle">第一章 命运的邂逅</h2>
+        </div>
+
+        <div class="reading-controls">
+            <!-- 字体大小控制 -->
+            <div class="control-group font-controls">
+                <button id="fontSizeDown" title="减小字体">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <span id="fontSizeDisplay">16px</span>
+                <button id="fontSizeUp" title="增大字体">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+
+            <!-- 主题切换控制 -->
+            <div class="control-group theme-controls">
+                <button id="themeLight" class="theme-btn active" title="浅色模式">
+                    <i class="fas fa-sun"></i>
+                </button>
+                <button id="themeDark" class="theme-btn" title="深色模式">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button id="themeSepia" class="theme-btn" title="护眼模式">
+                    <i class="fas fa-eye"></i>
+                </button>
+            </div>
+
+            <!-- 全屏控制 -->
+            <div class="control-group">
+                <button id="fullscreenBtn" title="全屏阅读">
+                    <i class="fas fa-expand"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 章节导航 -->
+    <div class="chapter-navigation">
+        <button id="prevChapter" class="nav-btn">
+            <i class="fas fa-chevron-left"></i> 上一章
+        </button>
+        <button id="chapterListBtn" class="nav-btn">
+            <i class="fas fa-list"></i> 目录
+        </button>
+        <button id="nextChapter" class="nav-btn">
+            下一章 <i class="fas fa-chevron-right"></i>
+        </button>
+    </div>
+
+    <!-- 阅读内容 -->
+    <div class="reading-content light-theme" id="readingContent">
+        <div class="content-placeholder">
+            <p>正在加载章节内容...</p>
+        </div>
+    </div>
+
+    <!-- 阅读进度 -->
+    <div class="reading-progress">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-text">
+            <span id="progressText">0%</span>
+        </div>
+    </div>
+
+    <!-- 底部章节导航 -->
+    <div class="chapter-navigation bottom">
+        <button id="prevChapterBottom" class="nav-btn">
+            <i class="fas fa-chevron-left"></i> 上一章
+        </button>
+        <button id="chapterListBtnBottom" class="nav-btn">
+            <i class="fas fa-list"></i> 目录
+        </button>
+        <button id="nextChapterBottom" class="nav-btn">
+            下一章 <i class="fas fa-chevron-right"></i>
+        </button>
+    </div>
+</div>
+
+<!-- 章节列表侧边栏 -->
+<div class="chapters-sidebar" id="chaptersSidebar">
+    <div class="sidebar-header">
+        <h3>章节列表</h3>
+        <button id="closeSidebar">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    <div class="chapters-list" id="sidebarChaptersList">
+        <!-- 章节列表将通过JavaScript动态生成 -->
+    </div>
+</div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- 通知组件 -->
+<div class="notification" id="notification">
+    <i class="fas fa-check-circle"></i>
+    <span id="notificationText">操作成功！</span>
+</div>
+
+<!-- 引入公共JavaScript文件 -->
+<script src="../static/js/common.js"></script>
+<!-- 引入章节阅读页特有JavaScript文件 -->
+<script src="../static/js/chapter-reading.js"></script>
+</body>
+</html>

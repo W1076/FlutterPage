@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据分析 - FlutterPage作者中心</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../static/css/common.css">
+    <link rel="stylesheet" href="../../static/css/data-analysis.css">
+</head>
+<body>
+<!-- 背景元素 -->
+<div id="backgroundElements" class="background-elements"></div>
+
+<!-- 导航栏 -->
+<nav class="navbar">
+    <div class="logo">
+        <h1><i class="fas fa-pen-fancy"></i> FlutterPage作者中心</h1>
+    </div>
+    <div class="nav-links">
+        <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> 仪表板</a>
+        <a href="works-management.html"><i class="fas fa-book"></i> 作品管理</a>
+        <a href="chapter-management.html"><i class="fas fa-file-alt"></i> 章节管理</a>
+        <a href="data-analysis.html" class="active"><i class="fas fa-chart-bar"></i> 数据分析</a>
+        <a href="income-center.html"><i class="fas fa-coins"></i> 收入中心</a>
+        <a href="comment-management.html"><i class="fas fa-comments"></i> 评论管理</a>
+        <a href="writing-settings.html"><i class="fas fa-cog"></i> 写作设置</a>
+    </div>
+    <div class="user-actions">
+        <div class="user-info">
+            <div class="user-avatar" id="authorAvatar">作</div>
+            <span id="authorName">作者名称</span>
+        </div>
+        <a href="../home.html" class="btn btn-secondary btn-sm">
+            <i class="fas fa-home"></i> 返回首页
+        </a>
+        <button class="logout-btn" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> 退出
+        </button>
+    </div>
+</nav>
+
+<!-- 主内容区 -->
+<div class="main-container data-analysis">
+    <!-- 页面标题和操作栏 -->
+    <div class="page-header">
+        <div class="page-title">
+            <i class="fas fa-chart-bar"></i> 数据分析
+            <span class="work-info" id="workInfo">- 整体数据</span>
+        </div>
+        <div class="page-actions">
+            <div class="work-selector">
+                <select id="workSelect" onchange="dataAnalysis.selectWork(this.value)">
+                    <option value="all">全部作品</option>
+                </select>
+            </div>
+            <div class="time-selector">
+                <select id="timeRange" onchange="dataAnalysis.changeTimeRange(this.value)">
+                    <option value="7">最近7天</option>
+                    <option value="30" selected>最近30天</option>
+                    <option value="90">最近90天</option>
+                    <option value="180">最近半年</option>
+                    <option value="365">最近一年</option>
+                    <option value="custom">自定义范围</option>
+                </select>
+            </div>
+            <button class="btn btn-secondary" onclick="dataAnalysis.exportReport()">
+                <i class="fas fa-download"></i> 导出报告
+            </button>
+            <button class="btn btn-primary" onclick="dataAnalysis.refreshData()">
+                <i class="fas fa-sync-alt"></i> 刷新数据
+            </button>
+        </div>
+    </div>
+
+    <!-- 自定义时间范围选择器 -->
+    <div class="custom-time-range" id="customTimeRange" style="display: none;">
+        <div class="custom-range-form">
+            <div class="form-group">
+                <label class="form-label">开始日期</label>
+                <input type="date" class="form-control" id="startDate">
+            </div>
+            <div class="form-group">
+                <label class="form-label">结束日期</label>
+                <input type="date" class="form-control" id="endDate">
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="dataAnalysis.applyCustomRange()">应用</button>
+        </div>
+    </div>
+
+    <!-- 数据概览卡片 -->
+    <div class="overview-cards">
+        <div class="overview-card">
+            <div class="card-icon">
+                <i class="fas fa-eye"></i>
+            </div>
+            <div class="card-content">
+                <h3>总阅读量</h3>
+                <div class="number" id="totalViews">0</div>
+                <div class="trend" id="viewsTrend">
+                    <i class="fas fa-arrow-up"></i> <span>0%</span> 较上月
+                </div>
+            </div>
+        </div>
+
+        <div class="overview-card">
+            <div class="card-icon">
+                <i class="fas fa-heart"></i>
+            </div>
+            <div class="card-content">
+                <h3>总收藏数</h3>
+                <div class="number" id="totalCollections">0</div>
+                <div class="trend" id="collectionsTrend">
+                    <i class="fas fa-arrow-up"></i> <span>0%</span> 较上月
+                </div>
+            </div>
+        </div>
+
+        <div class="overview-card">
+            <div class="card-icon">
+                <i class="fas fa-comment"></i>
+            </div>
+            <div class="card-content">
+                <h3>总评论数</h3>
+                <div class="number" id="totalComments">0</div>
+                <div class="trend" id="commentsTrend">
+                    <i class="fas fa-arrow-up"></i> <span>0%</span> 较上月
+                </div>
+            </div>
+        </div>
+
+        <div class="overview-card">
+            <div class="card-icon">
+                <i class="fas fa-coins"></i>
+            </div>
+            <div class="card-content">
+                <h3>总收入</h3>
+                <div class="number" id="totalIncome">¥0</div>
+                <div class="trend" id="incomeTrend">
+                    <i class="fas fa-arrow-up"></i> <span>0%</span> 较上月
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 图表区域 -->
+    <div class="charts-container">
+        <!-- 第一行图表 -->
+        <div class="chart-row">
+            <div class="chart-card large">
+                <div class="chart-header">
+                    <h4>阅读量趋势</h4>
+                    <div class="chart-actions">
+                        <button class="chart-action-btn active" data-metric="views">阅读量</button>
+                        <button class="chart-action-btn" data-metric="collections">收藏量</button>
+                        <button class="chart-action-btn" data-metric="comments">评论数</button>
+                    </div>
+                </div>
+                <div class="chart-body">
+                    <div class="line-chart" id="trendChart">
+                        <!-- 动态生成折线图 -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h4>读者性别分布</h4>
+                </div>
+                <div class="chart-body">
+                    <div class="pie-chart" id="genderChart">
+                        <!-- 动态生成饼图 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第二行图表 -->
+        <div class="chart-row">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h4>读者年龄分布</h4>
+                </div>
+                <div class="chart-body">
+                    <div class="bar-chart" id="ageChart">
+                        <!-- 动态生成柱状图 -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h4>阅读时段分布</h4>
+                </div>
+                <div class="chart-body">
+                    <div class="bar-chart" id="timeChart">
+                        <!-- 动态生成柱状图 -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h4>读者地域分布</h4>
+                </div>
+                <div class="chart-body">
+                    <div class="map-chart" id="regionChart">
+                        <!-- 动态生成地图图表 -->
+                        <div class="region-list" id="regionList">
+                            <!-- 动态生成地域列表 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第三行图表 -->
+        <div class="chart-row">
+            <div class="chart-card large">
+                <div class="chart-header">
+                    <h4>章节表现分析</h4>
+                </div>
+                <div class="chart-body">
+                    <div class="chapter-performance" id="chapterPerformance">
+                        <!-- 动态生成章节表现表格 -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h4>读者留存分析</h4>
+                </div>
+                <div class="chart-body">
+                    <div class="retention-chart" id="retentionChart">
+                        <!-- 动态生成留存率图表 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 数据洞察 -->
+    <div class="insights-section">
+        <div class="section-header">
+            <h3 class="section-title">
+                <i class="fas fa-lightbulb"></i> 数据洞察
+            </h3>
+        </div>
+        <div class="insights-grid" id="insightsGrid">
+            <!-- 动态生成数据洞察卡片 -->
+        </div>
+    </div>
+
+    <!-- 对比分析 -->
+    <div class="comparison-section">
+        <div class="section-header">
+            <h3 class="section-title">
+                <i class="fas fa-chart-line"></i> 作品对比
+            </h3>
+            <div class="comparison-controls">
+                <select id="comparisonMetric" onchange="dataAnalysis.updateComparison()">
+                    <option value="views">阅读量</option>
+                    <option value="collections">收藏量</option>
+                    <option value="comments">评论数</option>
+                    <option value="income">收入</option>
+                </select>
+            </div>
+        </div>
+        <div class="comparison-chart" id="comparisonChart">
+            <!-- 动态生成对比图表 -->
+        </div>
+    </div>
+</div>
+
+<!-- 数据详情模态框 -->
+<div id="detailModal" class="modal">
+    <div class="modal-content modal-lg">
+        <div class="modal-header">
+            <h3 id="detailModalTitle">数据详情</h3>
+            <button class="modal-close" onclick="dataAnalysis.closeDetailModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div id="detailModalContent">
+                <!-- 动态生成详情内容 -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 通知组件 -->
+<div id="notification" class="notification">
+    <i class="fas fa-check-circle"></i>
+    <span id="notificationText"></span>
+</div>
+
+<script src="../../static/js/common.js"></script>
+<script src="../../static/js/data-analysis.js"></script>
+</body>
+</html>

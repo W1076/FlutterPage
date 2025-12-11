@@ -1,0 +1,220 @@
+/* 小说列表页特有样式 */
+
+/* 页面标题区域 */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-xl);
+    flex-wrap: wrap;
+    gap: var(--space-md);
+}
+
+.page-actions {
+    display: flex;
+    gap: var(--space-md);
+    align-items: center;
+}
+
+/* 高级筛选 */
+.advanced-filters {
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-large);
+    padding: var(--space-xl);
+    margin-bottom: var(--space-xxl);
+    display: none;
+}
+
+.advanced-filters.active {
+    display: block;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.filter-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-lg);
+    margin-bottom: var(--space-lg);
+}
+
+.filter-group {
+    margin-bottom: var(--space-md);
+}
+
+.filter-label {
+    display: block;
+    margin-bottom: var(--space-sm);
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.filter-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+}
+
+.filter-option {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+.filter-option input {
+    accent-color: var(--primary-color);
+}
+
+.filter-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-md);
+    padding-top: var(--space-md);
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* 排序选项 */
+.sort-options {
+    display: flex;
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+    flex-wrap: wrap;
+}
+
+.sort-btn {
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    color: var(--text-dark);
+    border-radius: var(--radius-full);
+    padding: var(--space-xs) var(--space-lg);
+    cursor: pointer;
+    transition: all var(--transition-normal) ease;
+    font-size: var(--text-sm);
+}
+
+.sort-btn.active,
+.sort-btn:hover {
+    background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+    color: var(--text-white);
+}
+
+/* 列表视图 */
+.list-view .book-card {
+    display: flex;
+    gap: var(--space-lg);
+    padding: var(--space-lg);
+    margin-bottom: var(--space-md);
+}
+
+.list-view .book-cover {
+    flex: 0 0 120px;
+    height: 160px;
+}
+
+.list-view .book-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.list-view .book-title {
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-xs);
+}
+
+.list-view .book-author {
+    font-size: var(--text-base);
+    margin-bottom: var(--space-sm);
+}
+
+.list-view .book-description {
+    color: var(--text-light);
+    line-height: 1.6;
+    margin-bottom: var(--space-md);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.list-view .book-meta {
+    display: flex;
+    gap: var(--space-lg);
+    color: var(--text-light);
+    font-size: var(--text-sm);
+}
+
+.list-view .book-meta span {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+/* 网格视图 */
+.grid-view .books-grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+}
+
+/* 空状态 */
+.empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: var(--space-xxl);
+}
+
+/* 响应式设计 */
+@media (max-width: 991px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .list-view .book-card {
+        flex-direction: column;
+    }
+
+    .list-view .book-cover {
+        align-self: center;
+    }
+
+    .filter-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 767px) {
+    .page-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .sort-options {
+        justify-content: center;
+    }
+
+    .list-view .book-meta {
+        flex-wrap: wrap;
+        gap: var(--space-md);
+    }
+}
+
+@media (max-width: 575px) {
+    .grid-view .books-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .filter-options {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>章节管理 - FlutterPage作者中心</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../static/css/common.css">
+    <link rel="stylesheet" href="../../static/css/chapter-management.css">
+</head>
+<body>
+<!-- 背景元素 -->
+<div id="backgroundElements" class="background-elements"></div>
+
+<!-- 导航栏 -->
+<nav class="navbar">
+    <div class="logo">
+        <h1><i class="fas fa-pen-fancy"></i> FlutterPage作者中心</h1>
+    </div>
+    <div class="nav-links">
+        <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> 仪表板</a>
+        <a href="works-management.html"><i class="fas fa-book"></i> 作品管理</a>
+        <a href="chapter-management.html" class="active"><i class="fas fa-file-alt"></i> 章节管理</a>
+        <a href="data-analysis.html"><i class="fas fa-chart-bar"></i> 数据分析</a>
+        <a href="income-center.html"><i class="fas fa-coins"></i> 收入中心</a>
+        <a href="comment-management.html"><i class="fas fa-comments"></i> 评论管理</a>
+        <a href="writing-settings.html"><i class="fas fa-cog"></i> 写作设置</a>
+    </div>
+    <div class="user-actions">
+        <div class="user-info">
+            <div class="user-avatar" id="authorAvatar">作</div>
+            <span id="authorName">作者名称</span>
+        </div>
+        <a href="../home.html" class="btn btn-secondary btn-sm">
+            <i class="fas fa-home"></i> 返回首页
+        </a>
+        <button class="logout-btn" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> 退出
+        </button>
+    </div>
+</nav>
+
+<!-- 主内容区 -->
+<div class="main-container chapter-management">
+    <!-- 页面标题和操作栏 -->
+    <div class="page-header">
+        <div class="page-title">
+            <i class="fas fa-file-alt"></i> 章节管理
+            <span class="work-info" id="workInfo">- 选择作品</span>
+        </div>
+        <div class="page-actions">
+            <div class="work-selector">
+                <select id="workSelect" onchange="chapterManager.selectWork(this.value)">
+                    <option value="">选择作品...</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" id="createChapterBtn" disabled onclick="chapterManager.showCreateModal()">
+                <i class="fas fa-plus"></i> 新建章节
+            </button>
+            <button class="btn btn-secondary" id="batchActionsBtn" disabled onclick="chapterManager.showBatchActions()">
+                <i class="fas fa-tasks"></i> 批量操作
+            </button>
+            <button class="btn btn-secondary" onclick="chapterManager.exportChapters()">
+                <i class="fas fa-download"></i> 导出
+            </button>
+        </div>
+    </div>
+
+    <!-- 批量操作栏 -->
+    <div class="batch-actions-bar" id="batchActionsBar" style="display: none;">
+        <div class="batch-info">
+            <span>已选择 <span id="selectedCount">0</span> 个章节</span>
+        </div>
+        <div class="batch-buttons">
+            <button class="btn btn-secondary btn-sm" onclick="chapterManager.batchPublish()">
+                <i class="fas fa-paper-plane"></i> 批量发布
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="chapterManager.batchDelete()">
+                <i class="fas fa-trash"></i> 批量删除
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="chapterManager.batchMove()">
+                <i class="fas fa-exchange-alt"></i> 批量移动
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="chapterManager.clearSelection()">
+                <i class="fas fa-times"></i> 取消选择
+            </button>
+        </div>
+    </div>
+
+    <!-- 筛选和统计 -->
+    <div class="filter-bar">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="chapterSearch" placeholder="搜索章节标题..."
+                   oninput="chapterManager.searchChapters(this.value)">
+        </div>
+        <div class="filter-group">
+            <select id="statusFilter" onchange="chapterManager.filterChapters()">
+                <option value="all">全部状态</option>
+                <option value="published">已发布</option>
+                <option value="draft">草稿</option>
+                <option value="scheduled">定时发布</option>
+            </select>
+            <select id="sortBy" onchange="chapterManager.sortChapters()">
+                <option value="order">按章节顺序</option>
+                <option value="createTime">按创建时间</option>
+                <option value="updateTime">按更新时间</option>
+                <option value="views">按阅读量</option>
+            </select>
+        </div>
+        <div class="stats-info">
+            <span>共 <span id="totalChaptersCount">0</span> 章，<span id="totalWordsCount">0</span> 字</span>
+        </div>
+    </div>
+
+    <!-- 章节列表 -->
+    <div class="chapters-container">
+        <div class="chapters-list" id="chaptersList">
+            <!-- 动态生成章节列表 -->
+        </div>
+    </div>
+
+    <!-- 分页 -->
+    <div class="pagination" id="chaptersPagination">
+        <!-- 动态生成分页 -->
+    </div>
+</div>
+
+<!-- 新建/编辑章节模态框 -->
+<div id="chapterModal" class="modal">
+    <div class="modal-content modal-lg">
+        <div class="modal-header">
+            <h3 id="modalTitle">新建章节</h3>
+            <button class="modal-close" onclick="chapterManager.closeModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="chapterForm" onsubmit="chapterManager.saveChapter(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">章节标题 *</label>
+                        <input type="text" class="form-control" id="chapterTitle" required maxlength="100">
+                        <div class="form-text">不超过100个字符</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">章节序号 *</label>
+                        <input type="number" class="form-control" id="chapterOrder" required min="1" step="1">
+                        <div class="form-text">决定章节的显示顺序</div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">章节状态 *</label>
+                        <select class="form-control" id="chapterStatus" required>
+                            <option value="draft">草稿</option>
+                            <option value="published">立即发布</option>
+                            <option value="scheduled">定时发布</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="publishTimeGroup" style="display: none;">
+                        <label class="form-label">发布时间</label>
+                        <input type="datetime-local" class="form-control" id="publishTime">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">章节内容 *</label>
+                    <div class="editor-toolbar">
+                        <button type="button" class="toolbar-btn" onclick="chapterManager.formatText('bold')">
+                            <i class="fas fa-bold"></i>
+                        </button>
+                        <button type="button" class="toolbar-btn" onclick="chapterManager.formatText('italic')">
+                            <i class="fas fa-italic"></i>
+                        </button>
+                        <button type="button" class="toolbar-btn" onclick="chapterManager.formatText('underline')">
+                            <i class="fas fa-underline"></i>
+                        </button>
+                        <button type="button" class="toolbar-btn" onclick="chapterManager.insertHeading()">
+                            <i class="fas fa-heading"></i>
+                        </button>
+                        <button type="button" class="toolbar-btn" onclick="chapterManager.insertParagraph()">
+                            <i class="fas fa-paragraph"></i>
+                        </button>
+                        <button type="button" class="toolbar-btn" onclick="chapterManager.wordCount()">
+                            <i class="fas fa-calculator"></i> 字数统计
+                        </button>
+                    </div>
+                    <textarea class="form-control chapter-content" id="chapterContent" rows="20" required
+                              placeholder="开始撰写您的章节内容..."></textarea>
+                    <div class="editor-footer">
+                        <span class="word-count">字数: <span id="wordCount">0</span></span>
+                        <span class="character-count">字符: <span id="characterCount">0</span></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">作者说</label>
+                    <textarea class="form-control" id="authorNote" rows="3"
+                              placeholder="可以在这里对本章节进行说明，或者与读者互动..." maxlength="500"></textarea>
+                    <div class="form-text">不超过500个字符</div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="chapterManager.closeModal()">取消</button>
+                    <button type="button" class="btn btn-secondary" onclick="chapterManager.saveDraft()">保存草稿
+                    </button>
+                    <button type="submit" class="btn btn-primary">保存章节</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 章节预览模态框 -->
+<div id="previewModal" class="modal">
+    <div class="modal-content modal-xl">
+        <div class="modal-header">
+            <h3>章节预览</h3>
+            <button class="modal-close" onclick="chapterManager.closePreviewModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="preview-content" id="previewContent">
+                <!-- 动态生成预览内容 -->
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="chapterManager.closePreviewModal()">关闭</button>
+            <button class="btn btn-primary" onclick="chapterManager.editCurrentPreview()">编辑</button>
+        </div>
+    </div>
+</div>
+
+<!-- 批量操作模态框 -->
+<div id="batchModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="batchModalTitle">批量操作</h3>
+            <button class="modal-close" onclick="chapterManager.closeBatchModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div id="batchModalContent">
+                <!-- 动态生成批量操作内容 -->
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="chapterManager.closeBatchModal()">取消</button>
+            <button class="btn btn-primary" id="confirmBatchBtn">确认</button>
+        </div>
+    </div>
+</div>
+
+<!-- 删除确认模态框 -->
+<div id="deleteModal" class="modal">
+    <div class="modal-content modal-sm">
+        <div class="modal-header">
+            <h3>确认删除</h3>
+        </div>
+        <div class="modal-body">
+            <p id="deleteMessage">确定要删除这个章节吗？此操作不可恢复！</p>
+            <div class="warning-message">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>删除章节将同时删除相关的评论和数据</span>
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="chapterManager.closeDeleteModal()">取消</button>
+            <button class="btn btn-danger" id="confirmDeleteBtn">确认删除</button>
+        </div>
+    </div>
+</div>
+
+<!-- 通知组件 -->
+<div id="notification" class="notification">
+    <i class="fas fa-check-circle"></i>
+    <span id="notificationText"></span>
+</div>
+
+<script src="../../static/js/common.js"></script>
+<script src="../../static/js/chapter-management.js"></script>
+</body>
+</html>

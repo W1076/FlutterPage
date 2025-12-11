@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>收入中心 - FlutterPage作者中心</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../static/css/common.css">
+    <link rel="stylesheet" href="../../static/css/income-center.css">
+</head>
+<body>
+<!-- 背景元素 -->
+<div id="backgroundElements" class="background-elements"></div>
+
+<!-- 导航栏 -->
+<nav class="navbar">
+    <div class="logo">
+        <h1><i class="fas fa-pen-fancy"></i> FlutterPage作者中心</h1>
+    </div>
+    <div class="nav-links">
+        <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> 仪表板</a>
+        <a href="works-management.html"><i class="fas fa-book"></i> 作品管理</a>
+        <a href="chapter-management.html"><i class="fas fa-file-alt"></i> 章节管理</a>
+        <a href="data-analysis.html"><i class="fas fa-chart-bar"></i> 数据分析</a>
+        <a href="income-center.html" class="active"><i class="fas fa-coins"></i> 收入中心</a>
+        <a href="comment-management.html"><i class="fas fa-comments"></i> 评论管理</a>
+        <a href="writing-settings.html"><i class="fas fa-cog"></i> 写作设置</a>
+    </div>
+    <div class="user-actions">
+        <div class="user-info">
+            <div class="user-avatar" id="authorAvatar">作</div>
+            <span id="authorName">作者名称</span>
+        </div>
+        <a href="../home.html" class="btn btn-secondary btn-sm">
+            <i class="fas fa-home"></i> 返回首页
+        </a>
+        <button class="logout-btn" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> 退出
+        </button>
+    </div>
+</nav>
+
+<!-- 主内容区 -->
+<div class="main-container income-center">
+    <!-- 页面标题和操作栏 -->
+    <div class="page-header">
+        <div class="page-title">
+            <i class="fas fa-coins"></i> 收入中心
+        </div>
+        <div class="page-actions">
+            <button class="btn btn-primary" onclick="incomeCenter.showWithdrawModal()">
+                <i class="fas fa-wallet"></i> 申请提现
+            </button>
+            <button class="btn btn-secondary" onclick="incomeCenter.exportIncomeData()">
+                <i class="fas fa-download"></i> 导出数据
+            </button>
+            <button class="btn btn-secondary" onclick="incomeCenter.refreshData()">
+                <i class="fas fa-sync-alt"></i> 刷新
+            </button>
+        </div>
+    </div>
+
+    <!-- 收入概览 -->
+    <div class="income-overview">
+        <div class="balance-card">
+            <div class="balance-header">
+                <h3>可提现余额</h3>
+                <span class="balance-status available">可提现</span>
+            </div>
+            <div class="balance-amount">
+                <span class="amount" id="availableBalance">¥0.00</span>
+                <span class="currency">人民币</span>
+            </div>
+            <div class="balance-actions">
+                <button class="btn btn-primary" onclick="incomeCenter.showWithdrawModal()">
+                    <i class="fas fa-wallet"></i> 立即提现
+                </button>
+            </div>
+        </div>
+
+        <div class="income-cards">
+            <div class="income-card">
+                <div class="card-icon">
+                    <i class="fas fa-calendar-day"></i>
+                </div>
+                <div class="card-content">
+                    <h3>昨日收入</h3>
+                    <div class="number" id="yesterdayIncome">¥0.00</div>
+                    <div class="trend positive">
+                        <i class="fas fa-arrow-up"></i> 较前日 <span id="yesterdayChange">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="income-card">
+                <div class="card-icon">
+                    <i class="fas fa-calendar-week"></i>
+                </div>
+                <div class="card-content">
+                    <h3>本月收入</h3>
+                    <div class="number" id="monthlyIncome">¥0.00</div>
+                    <div class="trend positive">
+                        <i class="fas fa-arrow-up"></i> 较上月 <span id="monthlyChange">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="income-card">
+                <div class="card-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div class="card-content">
+                    <h3>累计收入</h3>
+                    <div class="number" id="totalIncome">¥0.00</div>
+                    <div class="trend positive">
+                        <i class="fas fa-arrow-up"></i> 总收益 <span id="totalChange">0%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 收入统计和图表 -->
+    <div class="income-charts">
+        <div class="chart-row">
+            <div class="chart-card large">
+                <div class="chart-header">
+                    <h4>收入趋势</h4>
+                    <div class="chart-actions">
+                        <select id="incomePeriod" onchange="incomeCenter.changeIncomePeriod(this.value)">
+                            <option value="7">最近7天</option>
+                            <option value="30" selected>最近30天</option>
+                            <option value="90">最近90天</option>
+                            <option value="365">最近一年</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="chart-body">
+                    <div class="line-chart" id="incomeTrendChart">
+                        <!-- 动态生成收入趋势图表 -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h4>收入来源分布</h4>
+                </div>
+                <div class="chart-body">
+                    <div class="pie-chart" id="incomeSourceChart">
+                        <!-- 动态生成收入来源饼图 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h4>作品收入排行</h4>
+                </div>
+                <div class="chart-body">
+                    <div class="ranking-chart" id="worksRankingChart">
+                        <!-- 动态生成作品收入排行 -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h4>收入类型分析</h4>
+                </div>
+                <div class="chart-body">
+                    <div class="bar-chart" id="incomeTypeChart">
+                        <!-- 动态生成收入类型柱状图 -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h4>读者付费分析</h4>
+                </div>
+                <div class="chart-body">
+                    <div class="reader-analysis" id="readerAnalysisChart">
+                        <!-- 动态生成读者付费分析 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 收入明细和提现记录 -->
+    <div class="income-details">
+        <div class="details-tabs">
+            <button class="tab-btn active" onclick="incomeCenter.switchTab('incomeRecords')">
+                <i class="fas fa-list"></i> 收入明细
+            </button>
+            <button class="tab-btn" onclick="incomeCenter.switchTab('withdrawRecords')">
+                <i class="fas fa-exchange-alt"></i> 提现记录
+            </button>
+            <button class="tab-btn" onclick="incomeCenter.switchTab('settlementRecords')">
+                <i class="fas fa-file-invoice-dollar"></i> 结算记录
+            </button>
+        </div>
+
+        <!-- 收入明细标签页 -->
+        <div class="tab-content active" id="incomeRecords">
+            <div class="records-header">
+                <div class="search-filter">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="搜索作品名称..."
+                               oninput="incomeCenter.searchIncomeRecords(this.value)">
+                    </div>
+                    <select id="incomeTypeFilter" onchange="incomeCenter.filterIncomeRecords()">
+                        <option value="all">全部类型</option>
+                        <option value="chapter">章节订阅</option>
+                        <option value="tip">读者打赏</option>
+                        <option value="vip">VIP分成</option>
+                        <option value="ad">广告收入</option>
+                        <option value="bonus">活动奖励</option>
+                    </select>
+                    <select id="incomeDateFilter" onchange="incomeCenter.filterIncomeRecords()">
+                        <option value="all">全部时间</option>
+                        <option value="today">今天</option>
+                        <option value="week">本周</option>
+                        <option value="month">本月</option>
+                        <option value="quarter">本季度</option>
+                    </select>
+                </div>
+            </div>
+            <div class="records-table">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>时间</th>
+                        <th>作品</th>
+                        <th>收入类型</th>
+                        <th>金额</th>
+                        <th>读者</th>
+                        <th>状态</th>
+                    </tr>
+                    </thead>
+                    <tbody id="incomeRecordsBody">
+                    <!-- 动态生成收入记录 -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination" id="incomeRecordsPagination">
+                <!-- 动态生成分页 -->
+            </div>
+        </div>
+
+        <!-- 提现记录标签页 -->
+        <div class="tab-content" id="withdrawRecords">
+            <div class="records-header">
+                <div class="withdraw-summary">
+                    <div class="summary-item">
+                        <span class="label">累计提现</span>
+                        <span class="value" id="totalWithdraw">¥0.00</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">本月提现</span>
+                        <span class="value" id="monthlyWithdraw">¥0.00</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">提现次数</span>
+                        <span class="value" id="withdrawCount">0次</span>
+                    </div>
+                </div>
+            </div>
+            <div class="records-table">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>申请时间</th>
+                        <th>提现金额</th>
+                        <th>手续费</th>
+                        <th>实际到账</th>
+                        <th>提现方式</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="withdrawRecordsBody">
+                    <!-- 动态生成提现记录 -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination" id="withdrawRecordsPagination">
+                <!-- 动态生成分页 -->
+            </div>
+        </div>
+
+        <!-- 结算记录标签页 -->
+        <div class="tab-content" id="settlementRecords">
+            <div class="records-header">
+                <div class="settlement-info">
+                    <div class="info-item">
+                        <span class="label">结算周期</span>
+                        <span class="value">每月25日</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">最低提现金额</span>
+                        <span class="value">¥100.00</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">提现手续费</span>
+                        <span class="value">1%</span>
+                    </div>
+                </div>
+            </div>
+            <div class="records-table">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>结算周期</th>
+                        <th>收入金额</th>
+                        <th>平台分成</th>
+                        <th>税费</th>
+                        <th>实际结算</th>
+                        <th>结算状态</th>
+                        <th>结算时间</th>
+                    </tr>
+                    </thead>
+                    <tbody id="settlementRecordsBody">
+                    <!-- 动态生成结算记录 -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination" id="settlementRecordsPagination">
+                <!-- 动态生成分页 -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 提现申请模态框 -->
+<div id="withdrawModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>申请提现</h3>
+            <button class="modal-close" onclick="incomeCenter.closeWithdrawModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="withdrawForm" onsubmit="incomeCenter.submitWithdraw(event)">
+                <div class="withdraw-info">
+                    <div class="info-item">
+                        <span class="label">可提现余额</span>
+                        <span class="value" id="modalAvailableBalance">¥0.00</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">最低提现金额</span>
+                        <span class="value">¥100.00</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">提现手续费</span>
+                        <span class="value">1%</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">提现金额 *</label>
+                    <input type="number" class="form-control" id="withdrawAmount"
+                           placeholder="请输入提现金额" min="100" step="0.01" required>
+                    <div class="form-text">提现金额不能低于100元</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">提现方式 *</label>
+                    <div class="withdraw-methods">
+                        <label class="method-option">
+                            <input type="radio" name="withdrawMethod" value="alipay" checked>
+                            <div class="method-content">
+                                <i class="fab fa-alipay"></i>
+                                <span>支付宝</span>
+                            </div>
+                        </label>
+                        <label class="method-option">
+                            <input type="radio" name="withdrawMethod" value="wechat">
+                            <div class="method-content">
+                                <i class="fab fa-weixin"></i>
+                                <span>微信支付</span>
+                            </div>
+                        </label>
+                        <label class="method-option">
+                            <input type="radio" name="withdrawMethod" value="bank">
+                            <div class="method-content">
+                                <i class="fas fa-university"></i>
+                                <span>银行卡</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group" id="alipayAccountGroup">
+                    <label class="form-label">支付宝账号 *</label>
+                    <input type="text" class="form-control" id="alipayAccount"
+                           placeholder="请输入支付宝账号">
+                </div>
+
+                <div class="form-group" id="wechatAccountGroup" style="display: none;">
+                    <label class="form-label">微信账号 *</label>
+                    <input type="text" class="form-control" id="wechatAccount"
+                           placeholder="请输入微信账号">
+                </div>
+
+                <div class="form-group" id="bankAccountGroup" style="display: none;">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">开户银行 *</label>
+                            <input type="text" class="form-control" id="bankName"
+                                   placeholder="请输入开户银行">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">银行卡号 *</label>
+                            <input type="text" class="form-control" id="bankAccount"
+                                   placeholder="请输入银行卡号">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">开户姓名 *</label>
+                            <input type="text" class="form-control" id="accountName"
+                                   placeholder="请输入开户姓名">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="withdraw-summary">
+                    <div class="summary-row">
+                        <span class="label">提现金额</span>
+                        <span class="value" id="summaryAmount">¥0.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="label">手续费 (1%)</span>
+                        <span class="value" id="summaryFee">¥0.00</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span class="label">实际到账</span>
+                        <span class="value" id="summaryActual">¥0.00</span>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="incomeCenter.closeWithdrawModal()">取消
+                    </button>
+                    <button type="submit" class="btn btn-primary">确认提现</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 收入详情模态框 -->
+<div id="incomeDetailModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>收入详情</h3>
+            <button class="modal-close" onclick="incomeCenter.closeIncomeDetailModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div id="incomeDetailContent">
+                <!-- 动态生成收入详情 -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 通知组件 -->
+<div id="notification" class="notification">
+    <i class="fas fa-check-circle"></i>
+    <span id="notificationText"></span>
+</div>
+
+<script src="../../static/js/common.js"></script>
+<script src="../../static/js/income-center.js"></script>
+</body>
+</html>

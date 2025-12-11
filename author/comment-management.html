@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>评论管理 - FlutterPage作者中心</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../static/css/common.css">
+    <link rel="stylesheet" href="../../static/css/comment-management.css">
+</head>
+<body>
+    <!-- 背景元素 -->
+    <div id="backgroundElements" class="background-elements"></div>
+
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="logo">
+            <h1><i class="fas fa-pen-fancy"></i> FlutterPage作者中心</h1>
+        </div>
+        <div class="nav-links">
+            <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> 仪表板</a>
+            <a href="works-management.html"><i class="fas fa-book"></i> 作品管理</a>
+            <a href="chapter-management.html"><i class="fas fa-file-alt"></i> 章节管理</a>
+            <a href="data-analysis.html"><i class="fas fa-chart-bar"></i> 数据分析</a>
+            <a href="income-center.html"><i class="fas fa-coins"></i> 收入中心</a>
+            <a href="comment-management.html" class="active"><i class="fas fa-comments"></i> 评论管理</a>
+            <a href="writing-settings.html"><i class="fas fa-cog"></i> 写作设置</a>
+        </div>
+        <div class="user-actions">
+            <div class="user-info">
+                <div class="user-avatar" id="authorAvatar">作</div>
+                <span id="authorName">作者名称</span>
+            </div>
+            <a href="../home.html" class="btn btn-secondary btn-sm">
+                <i class="fas fa-home"></i> 返回首页
+            </a>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> 退出
+            </button>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <div class="main-container comment-management">
+        <!-- 页面标题和操作栏 -->
+        <div class="page-header">
+            <div class="page-title">
+                <i class="fas fa-comments"></i> 评论管理
+                <span class="comments-count">(共 <span id="totalCommentsCount">0</span> 条评论)</span>
+            </div>
+            <div class="page-actions">
+                <div class="work-selector">
+                    <select id="workSelect" onchange="commentManager.selectWork(this.value)">
+                        <option value="all">全部作品</option>
+                    </select>
+                </div>
+                <button class="btn btn-secondary" onclick="commentManager.markAllAsRead()">
+                    <i class="fas fa-check-double"></i> 全部已读
+                </button>
+                <button class="btn btn-secondary" onclick="commentManager.exportComments()">
+                    <i class="fas fa-download"></i> 导出评论
+                </button>
+                <button class="btn btn-primary" onclick="commentManager.refreshComments()">
+                    <i class="fas fa-sync-alt"></i> 刷新
+                </button>
+            </div>
+        </div>
+
+        <!-- 评论统计 -->
+        <div class="comments-stats">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-comment"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number" id="totalComments">0</div>
+                    <div class="stat-label">总评论数</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number" id="unrepliedComments">0</div>
+                    <div class="stat-label">未回复评论</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number" id="positiveComments">0</div>
+                    <div class="stat-label">好评数</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-thumbs-up"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number" id="todayComments">0</div>
+                    <div class="stat-label">今日新增</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 筛选和搜索 -->
+        <div class="filter-bar">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="commentSearch" placeholder="搜索评论内容或读者名称..." oninput="commentManager.searchComments(this.value)">
+            </div>
+            <div class="filter-group">
+                <select id="statusFilter" onchange="commentManager.filterComments()">
+                    <option value="all">全部状态</option>
+                    <option value="unreplied">未回复</option>
+                    <option value="replied">已回复</option>
+                    <option value="pinned">已置顶</option>
+                </select>
+                <select id="sentimentFilter" onchange="commentManager.filterComments()">
+                    <option value="all">全部情感</option>
+                    <option value="positive">好评</option>
+                    <option value="neutral">中评</option>
+                    <option value="negative">差评</option>
+                </select>
+                <select id="sortBy" onchange="commentManager.sortComments()">
+                    <option value="newest">最新优先</option>
+                    <option value="oldest">最早优先</option>
+                    <option value="likes">点赞数</option>
+                    <option value="replies">回复数</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- 批量操作栏 -->
+        <div class="batch-actions-bar" id="batchActionsBar" style="display: none;">
+            <div class="batch-info">
+                <span>已选择 <span id="selectedCommentsCount">0</span> 条评论</span>
+            </div>
+            <div class="batch-buttons">
+                <button class="btn btn-secondary btn-sm" onclick="commentManager.batchReply()">
+                    <i class="fas fa-reply"></i> 批量回复
+                </button>
+                <button class="btn btn-secondary btn-sm" onclick="commentManager.batchDelete()">
+                    <i class="fas fa-trash"></i> 批量删除
+                </button>
+                <button class="btn btn-secondary btn-sm" onclick="commentManager.batchMarkAsRead()">
+                    <i class="fas fa-check"></i> 标记已读
+                </button>
+                <button class="btn btn-secondary btn-sm" onclick="commentManager.clearSelection()">
+                    <i class="fas fa-times"></i> 取消选择
+                </button>
+            </div>
+        </div>
+
+        <!-- 评论列表 -->
+        <div class="comments-container">
+            <div class="comments-list" id="commentsList">
+                <!-- 动态生成评论列表 -->
+            </div>
+        </div>
+
+        <!-- 分页 -->
+        <div class="pagination" id="commentsPagination">
+            <!-- 动态生成分页 -->
+        </div>
+    </div>
+
+    <!-- 回复评论模态框 -->
+    <div id="replyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>回复评论</h3>
+                <button class="modal-close" onclick="commentManager.closeReplyModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="original-comment" id="originalComment">
+                    <!-- 动态生成原始评论 -->
+                </div>
+                <form id="replyForm" onsubmit="commentManager.submitReply(event)">
+                    <div class="form-group">
+                        <label class="form-label">回复内容 *</label>
+                        <textarea class="form-control" id="replyContent" rows="4" placeholder="请输入回复内容..." required maxlength="500"></textarea>
+                        <div class="form-text">不超过500个字符</div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="commentManager.closeReplyModal()">取消</button>
+                        <button type="submit" class="btn btn-primary">发送回复</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 批量回复模态框 -->
+    <div id="batchReplyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>批量回复评论</h3>
+                <button class="modal-close" onclick="commentManager.closeBatchReplyModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>您将向 <span id="batchReplyCount">0</span> 条评论发送相同的回复内容。</p>
+                <form id="batchReplyForm" onsubmit="commentManager.submitBatchReply(event)">
+                    <div class="form-group">
+                        <label class="form-label">回复内容 *</label>
+                        <textarea class="form-control" id="batchReplyContent" rows="4" placeholder="请输入回复内容..." required maxlength="500"></textarea>
+                        <div class="form-text">不超过500个字符，所有选中的评论将收到相同的回复</div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="commentManager.closeBatchReplyModal()">取消</button>
+                        <button type="submit" class="btn btn-primary">批量回复</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 评论详情模态框 -->
+    <div id="commentDetailModal" class="modal">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h3>评论详情</h3>
+                <button class="modal-close" onclick="commentManager.closeCommentDetailModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="commentDetailContent">
+                    <!-- 动态生成评论详情 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 删除确认模态框 -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <h3>确认删除</h3>
+            </div>
+            <div class="modal-body">
+                <p id="deleteMessage">确定要删除这条评论吗？此操作不可恢复！</p>
+                <div class="warning-message">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>删除评论将同时删除相关的回复内容</span>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="commentManager.closeDeleteModal()">取消</button>
+                <button class="btn btn-danger" id="confirmDeleteBtn">确认删除</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 通知组件 -->
+    <div id="notification" class="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationText"></span>
+    </div>
+
+    <script src="../../static/js/common.js"></script>
+    <script src="../../static/js/comment-management.js"></script>
+</body>
+</html>

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>作品管理 - FlutterPage作者中心</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../static/css/common.css">
+    <link rel="stylesheet" href="../../static/css/works-management.css">
+</head>
+<body>
+<!-- 背景元素 -->
+<div id="backgroundElements" class="background-elements"></div>
+
+<!-- 导航栏 -->
+<nav class="navbar">
+    <div class="logo">
+        <h1><i class="fas fa-pen-fancy"></i> FlutterPage作者中心</h1>
+    </div>
+    <div class="nav-links">
+        <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> 仪表板</a>
+        <a href="works-management.html" class="active"><i class="fas fa-book"></i> 作品管理</a>
+        <a href="chapter-management.html"><i class="fas fa-file-alt"></i> 章节管理</a>
+        <a href="data-analysis.html"><i class="fas fa-chart-bar"></i> 数据分析</a>
+        <a href="income-center.html"><i class="fas fa-coins"></i> 收入中心</a>
+        <a href="comment-management.html"><i class="fas fa-comments"></i> 评论管理</a>
+        <a href="writing-settings.html"><i class="fas fa-cog"></i> 写作设置</a>
+    </div>
+    <div class="user-actions">
+        <div class="user-info">
+            <div class="user-avatar" id="authorAvatar">作</div>
+            <span id="authorName">作者名称</span>
+        </div>
+        <a href="../home.html" class="btn btn-secondary btn-sm">
+            <i class="fas fa-home"></i> 返回首页
+        </a>
+        <button class="logout-btn" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> 退出
+        </button>
+    </div>
+</nav>
+
+<!-- 主内容区 -->
+<div class="main-container works-management">
+    <!-- 页面标题和操作栏 -->
+    <div class="page-header">
+        <div class="page-title">
+            <i class="fas fa-book"></i> 作品管理
+            <span class="works-count">(共 <span id="totalWorksCount">0</span> 部作品)</span>
+        </div>
+        <div class="page-actions">
+            <button class="btn btn-primary" onclick="worksManager.showCreateModal()">
+                <i class="fas fa-plus"></i> 新建作品
+            </button>
+            <button class="btn btn-secondary" onclick="worksManager.exportWorksData()">
+                <i class="fas fa-download"></i> 导出数据
+            </button>
+        </div>
+    </div>
+
+    <!-- 筛选和搜索 -->
+    <div class="filter-bar">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="worksSearch" placeholder="搜索作品名称..."
+                   oninput="worksManager.searchWorks(this.value)">
+        </div>
+        <div class="filter-group">
+            <select id="statusFilter" onchange="worksManager.filterWorks()">
+                <option value="all">全部状态</option>
+                <option value="publishing">连载中</option>
+                <option value="finished">已完结</option>
+                <option value="draft">草稿</option>
+                <option value="pending">审核中</option>
+            </select>
+            <select id="sortBy" onchange="worksManager.sortWorks()">
+                <option value="updateTime">按更新时间</option>
+                <option value="createTime">按创建时间</option>
+                <option value="views">按阅读量</option>
+                <option value="collections">按收藏数</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- 作品列表 -->
+    <div class="works-list" id="worksList">
+        <!-- 动态生成作品列表 -->
+    </div>
+
+    <!-- 分页 -->
+    <div class="pagination" id="worksPagination">
+        <!-- 动态生成分页 -->
+    </div>
+</div>
+
+<!-- 新建/编辑作品模态框 -->
+<div id="workModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modalTitle">新建作品</h3>
+            <button class="modal-close" onclick="worksManager.closeModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="workForm" onsubmit="worksManager.saveWork(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">作品名称 *</label>
+                        <input type="text" class="form-control" id="workTitle" required maxlength="50">
+                        <div class="form-text">不超过50个字符</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">作品类型 *</label>
+                        <select class="form-control" id="workCategory" required>
+                            <option value="">选择分类</option>
+                            <option value="玄幻">玄幻</option>
+                            <option value="仙侠">仙侠</option>
+                            <option value="都市">都市</option>
+                            <option value="科幻">科幻</option>
+                            <option value="悬疑">悬疑</option>
+                            <option value="历史">历史</option>
+                            <option value="游戏">游戏</option>
+                            <option value="体育">体育</option>
+                            <option value="军事">军事</option>
+                            <option value="二次元">二次元</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">作品标签</label>
+                        <div class="tags-input" id="tagsContainer">
+                            <!-- 动态生成标签 -->
+                        </div>
+                        <input type="text" class="form-control" id="tagInput" placeholder="输入标签后按回车添加"
+                               maxlength="10">
+                        <div class="form-text">最多添加5个标签，每个标签不超过10个字符</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">作品状态 *</label>
+                        <select class="form-control" id="workStatus" required>
+                            <option value="draft">草稿</option>
+                            <option value="publishing">连载中</option>
+                            <option value="finished">已完结</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">作品简介 *</label>
+                    <textarea class="form-control" id="workDescription" rows="4" required maxlength="500"></textarea>
+                    <div class="form-text">不超过500个字符，好的简介能吸引更多读者</div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">封面图片</label>
+                        <div class="cover-upload">
+                            <div class="cover-preview" id="coverPreview">
+                                <i class="fas fa-book"></i>
+                                <span>封面预览</span>
+                            </div>
+                            <input type="file" id="coverUpload" accept="image/*" style="display: none;">
+                            <button type="button" class="btn btn-secondary btn-sm"
+                                    onclick="document.getElementById('coverUpload').click()">
+                                <i class="fas fa-upload"></i> 上传封面
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">作品属性</label>
+                        <div class="work-attributes">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="isVip"> VIP作品
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="allowComments"> 允许评论
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="allowRecommend"> 允许推荐
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="worksManager.closeModal()">取消</button>
+                    <button type="submit" class="btn btn-primary">保存作品</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 删除确认模态框 -->
+<div id="deleteModal" class="modal">
+    <div class="modal-content modal-sm">
+        <div class="modal-header">
+            <h3>确认删除</h3>
+        </div>
+        <div class="modal-body">
+            <p>确定要删除作品 "<span id="deleteWorkTitle"></span>" 吗？此操作不可恢复！</p>
+            <div class="warning-message">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>删除作品将同时删除所有章节和评论数据</span>
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="worksManager.closeDeleteModal()">取消</button>
+            <button class="btn btn-danger" id="confirmDeleteBtn">确认删除</button>
+        </div>
+    </div>
+</div>
+
+<!-- 通知组件 -->
+<div id="notification" class="notification">
+    <i class="fas fa-check-circle"></i>
+    <span id="notificationText"></span>
+</div>
+
+<script src="../../static/js/common.js"></script>
+<script src="../../static/js/works-management.js"></script>
+</body>
+</html>
